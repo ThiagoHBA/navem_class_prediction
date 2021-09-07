@@ -4,6 +4,10 @@ from keras.models import load_model
 from keras.models import model_from_json
 from keras.preprocessing import image
 import numpy as np
+import cv2
+import time
+
+cam = cv2.VideoCapture(0)
 
 
 def main():
@@ -17,18 +21,29 @@ def main():
     except:
         print('Impossible to load model, check the file paths')
 
-    imagePath = fileDataset.getDatasetTrainPathImage()
-    loadedImage = image.load_img(imagePath, target_size = fileDataset.getImageSize(), color_mode='grayscale')
-    
-    x = image.img_to_array(loadedImage)
+##    imagePath = fileDataset.getDatasetTrainPathImage()
+##    loadedImage = image.load_img(imagePath, target_size = fileDataset.getImageSize(), color_mode='grayscale')
+
+    while True:
+        resizedImage = captureAndResizedImage(fileDataset.getImageSize(), cv2.COLOR_BGR2GRAY)
+        
+        np.set_printoptions(suppress=True)
+        images = np.vstack([resizedImage])
+        classes = model.predict(resizedImage, batch_size=64)
+
+        print("Image in class: {}".format(np.argmax(classes)))
+
+
+def captureAndResizedImage(imageSize, colorScale):   
+    ret, camImage = cam.read()
+    camImage = cv2.resize(camImage, imageSize)
+    camImage = cv2.cvtColor(camImage, colorScale)
+
+    x = image.img_to_array(camImage)
     x = np.expand_dims(x, axis=0)
 
-    np.set_printoptions(suppress=True)
-    images = np.vstack([x])
-    classes = model.predict(x, batch_size=64)
-
-    print("Image in class: {}".format(np.argmax(classes)    ))
-    
+    return x
+   
 if __name__ == "__main__":
     main()
 

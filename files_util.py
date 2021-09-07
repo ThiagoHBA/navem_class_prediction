@@ -27,7 +27,7 @@ class FileModel:
         weightFile = Files.findFile(self.weightFile, self.path)
         return weightFile
 
-class FileDataset():
+class FileDataset:
     def __init__(self, path, datasetName, architecture, imageFile):
         self.datasetName = datasetName
         self.path = path
