@@ -36,6 +36,9 @@ def main():
 
 def captureAndResizedImage(imageSize, colorScale):   
     ret, camImage = cam.read()
+    cv2.imshow('Imagem', camImage)
+
+    cv2.waitKey(100)
     camImage = cv2.resize(camImage, imageSize)
     camImage = cv2.cvtColor(camImage, colorScale)
 
