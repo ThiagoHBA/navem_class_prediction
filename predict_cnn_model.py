@@ -11,28 +11,36 @@ cam = cv2.VideoCapture(0)
 
 
 def main():
-    fileModel = FileModel('exp_335', 'model_struct.json', 'model_weights_299.h5')
+    fileModelX = FileModel('exp_349_x', 'model_struct.json', 'model_weights_299.h5')
+    fileModelY = FileModel('exp_335_y', 'model_struct.json', 'model_weights_299.h5')
+    
     fileDataset = FileDataset('datasets','sidewalk_accy_all_datasets_classes_new_1630_00', 'dronet', '000001.jpg')
 
-    try:
-        model = model_from_json(fileModel.jsonModel())
-        model.load_weights(fileModel.weightsModel())
-        model.compile(loss='sparse_categorical_crossentropy', optimizer='adam')
-    except:
-        print('Impossible to load model, check the file paths')
-
-##    imagePath = fileDataset.getDatasetTrainPathImage()
-##    loadedImage = image.load_img(imagePath, target_size = fileDataset.getImageSize(), color_mode='grayscale')
-
+    modelX = compileModel(fileModelX)
+    modelY = compileModel(fileModelY)
+    
     while True:
         resizedImage = captureAndResizedImage(fileDataset.getImageSize(), cv2.COLOR_BGR2GRAY)
         
         np.set_printoptions(suppress=True)
         images = np.vstack([resizedImage])
-        classes = model.predict(resizedImage, batch_size=64)
 
-        print("Image in class: {}".format(np.argmax(classes)))
+        classX = modelX.predict(resizedImage, batch_size=64)
+        classY = modelY.predict(resizedImage, batch_size=64)
 
+        print("Image in class X: {}".format(np.argmax(classX)))
+        print("Image in class Y: {}".format(np.argmax(classY)))
+        
+
+def compileModel(fileModel):
+    try:
+        _model = model_from_json(fileModel.jsonModel())
+        _model.load_weights(fileModel.weightsModel())
+        _model.compile(loss='sparse_categorical_crossentropy', optimizer='adam')
+    except:
+        print('Impossible to load model, check the file paths')
+        
+    return _model
 
 def captureAndResizedImage(imageSize, colorScale):   
     ret, camImage = cam.read()
