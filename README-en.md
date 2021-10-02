@@ -1,3 +1,7 @@
+## Languages
+* <a href="https://github.com/ThiagoHBA/navem_class_prediction/blob/master/README.md">PT-BR</a>
+* <a href="https://github.com/ThiagoHBA/navem_class_prediction/blob/master/README-en.md">EN</a>
+
 # Navem Class Prediction
 [![NPM](https://img.shields.io/npm/l/react)](https://github.com/ThiagoHBA/navem_class_prediction/blob/master/LICENSE) 
 
