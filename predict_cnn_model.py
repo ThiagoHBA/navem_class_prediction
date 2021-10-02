@@ -20,9 +20,11 @@ def main():
     modelX = compileModel(fileModelX)
     modelY = compileModel(fileModelY)
     
-    predictLoopProcess(limitPredictions, fileDataset, modelX, modelY, False)
+    predictLoopProcess(limitPredictions, fileDataset, modelX, modelY, True)
 
-def predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, infinity = False, loops = 1):
+def predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, infinity = False, metrics = False, loops = 1):
+    timeStart = datetime.now()
+    
     for i in range(loops):
         classPredictions = []
         
@@ -37,8 +39,19 @@ def predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, infinity = 
         print("Image in class X: {}".format(classVote(classPredictions, 'x')))
         print("Imagem in class Y: {}".format(classVote(classPredictions, 'y')))
 
+        timeEnd = datetime.now()
+        
+        if(metrics):
+            calculeElapsedTime(timeStart, timeEnd, "Class Result")
+
     if(infinity):
-        predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, True, loops)
+        predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, True, metrics ,loops)
+
+
+def calculeElapsedTime(timeStart, timeEnd, label = ''):
+    print("=" * 15)
+    print(label + "ElapsedTime in ms: {}".format((timeEnd-timeStart).microseconds / 1000))
+    print("=" * 15 + "\n")
         
 def predictImage(image, kerasModel):       
     np.set_printoptions(suppress=True)
@@ -59,7 +72,8 @@ def compileModel(fileModel):
         
     return _model
 
-def captureAndResizedImage(imageSize, colorScale):
+def captureAndResizedImage(imageSize, colorScale, metrics = False):
+    timeStart = datetime.now()
     ret, camImage = cam.read()
     cv2.imshow('Imagem', camImage)
     cv2.waitKey(166) # ~6 frames per second
@@ -67,7 +81,10 @@ def captureAndResizedImage(imageSize, colorScale):
     camImage = cv2.cvtColor(camImage, colorScale)
     x = image.img_to_array(camImage)
     x = np.expand_dims(x, axis=0)
+    timeEnd = datetime.now()
 
+    if(metrics):
+        calculeElapsedTime(timeStart, timeEnd, "Capture Image")
     return x
 
 def classVote(classValues, direction):
