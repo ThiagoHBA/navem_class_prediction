@@ -4,6 +4,7 @@ from keras.models import load_model
 from keras.models import model_from_json
 from keras.preprocessing import image
 from datetime import datetime
+import classification_class as classification
 import numpy as np
 import cv2
 import time
@@ -19,15 +20,15 @@ def main():
 
     modelX = compileModel(fileModelX)
     modelY = compileModel(fileModelY)
+    infinity = True
+    showMetrics = False
     
-    predictLoopProcess(limitPredictions, fileDataset, modelX, modelY, True)
+    predictLoopProcess(limitPredictions, fileDataset, modelX, modelY, infinity, showMetrics)
 
 def predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, infinity = False, metrics = False, loops = 1):
-    timeStart = datetime.now()
-    
     for i in range(loops):
         classPredictions = []
-        
+        timeStart = datetime.now()
         for j in range(limit):
             resizedImage = captureAndResizedImage(fileDataset.getImageSize(), fileDataset.getImageColorScale())
             
@@ -36,8 +37,9 @@ def predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, infinity = 
 
             classPredictions.append((np.argmax(classX), np.argmax(classY)))
 
-        print("Image in class X: {}".format(classVote(classPredictions, 'x')))
-        print("Imagem in class Y: {}".format(classVote(classPredictions, 'y')))
+        
+        classification.selectClassificationClass('x', classVote(classPredictions, 'x'))
+        classification.selectClassificationClass('y', classVote(classPredictions, 'y'))
 
         timeEnd = datetime.now()
         
@@ -103,6 +105,8 @@ def classVote(classValues, direction):
       selectedClass = values[occurrency]
 
   return selectedClass
+
+
    
 if __name__ == "__main__":
     main()
