@@ -1,10 +1,10 @@
-from files_util import FileModel
-from files_util import FileDataset
+from common.utils.file_model_util import FileModel
+from common.utils.dataset_util import FileDataset
+from common.utils.classification_util import ClassificationUtil
 from keras.models import load_model
 from keras.models import model_from_json
 from keras.preprocessing import image
 from datetime import datetime
-import classification_class as classification
 import numpy as np
 import cv2
 import time
@@ -21,7 +21,7 @@ def main():
     modelX = compileModel(fileModelX)
     modelY = compileModel(fileModelY)
     infinity = True
-    showMetrics = False
+    showMetrics = True
     
     predictLoopProcess(limitPredictions, fileDataset, modelX, modelY, infinity, showMetrics)
 
@@ -29,6 +29,7 @@ def predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, infinity = 
     for i in range(loops):
         classPredictions = []
         timeStart = datetime.now()
+        
         for j in range(limit):
             resizedImage = captureAndResizedImage(fileDataset.getImageSize(), fileDataset.getImageColorScale())
             
@@ -37,9 +38,8 @@ def predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, infinity = 
 
             classPredictions.append((np.argmax(classX), np.argmax(classY)))
 
-        
-        classification.selectClassificationClass('x', classVote(classPredictions, 'x'))
-        classification.selectClassificationClass('y', classVote(classPredictions, 'y'))
+        ClassificationUtil.selectClassificationClass('x', classVote(classPredictions, 'x'))
+        ClassificationUtil.selectClassificationClass('y', classVote(classPredictions, 'y'))
 
         timeEnd = datetime.now()
         
@@ -78,7 +78,7 @@ def captureAndResizedImage(imageSize, colorScale, metrics = False):
     timeStart = datetime.now()
     ret, camImage = cam.read()
     cv2.imshow('Imagem', camImage)
-    cv2.waitKey(166) # ~6 frames per second
+    #cv2.waitKey(166) # ~6 frames per second
     camImage = cv2.resize(camImage, imageSize)
     camImage = cv2.cvtColor(camImage, colorScale)
     x = image.img_to_array(camImage)
