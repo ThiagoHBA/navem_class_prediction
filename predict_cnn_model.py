@@ -1,13 +1,11 @@
 from common.utils.file_model_util import FileModel
 from common.utils.dataset_util import FileDataset
 from common.utils.classification_util import ClassificationUtil
-from keras.models import load_model
-from keras.models import model_from_json
+
 from keras.preprocessing import image
 from datetime import datetime
 import numpy as np
 import cv2
-import time
 
 cam = cv2.VideoCapture(0)
 
@@ -18,14 +16,17 @@ def main():
     fileModelY = FileModel('models/exp_335_y', 'model_struct.json', 'model_weights_299.h5')
     fileDataset = FileDataset('datasets','sidewalk_accy_all_datasets_classes_new_1630_00', 'dronet', '000001.jpg')
 
-    modelX = compileModel(fileModelX)
-    modelY = compileModel(fileModelY)
+    modelX = fileModelX.compileModel()
+    modelY = fileModelY.compileModel()
+    
     infinity = True
     showMetrics = True
     
     predictLoopProcess(limitPredictions, fileDataset, modelX, modelY, infinity, showMetrics)
 
 def predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, infinity = False, metrics = False, loops = 1):
+    classificationMethods = ClassificationUtil()
+
     for i in range(loops):
         classPredictions = []
         timeStart = datetime.now()
@@ -38,8 +39,8 @@ def predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, infinity = 
 
             classPredictions.append((np.argmax(classX), np.argmax(classY)))
 
-        ClassificationUtil.selectClassificationClass('x', classVote(classPredictions, 'x'))
-        ClassificationUtil.selectClassificationClass('y', classVote(classPredictions, 'y'))
+        classificationMethods.selectClassificationClass('x', classPredictions)
+        classificationMethods.selectClassificationClass('y', classPredictions)
 
         timeEnd = datetime.now()
         
@@ -62,23 +63,11 @@ def predictImage(image, kerasModel):
     
     return result
 
-def compileModel(fileModel):
-    print("Compiling Model...")
-    print("="*15)
-    try:
-        _model = model_from_json(fileModel.jsonModel())
-        _model.load_weights(fileModel.weightsModel())
-        _model.compile(loss='sparse_categorical_crossentropy', optimizer='adam')
-    except:
-        print('Impossible to load model, check the file paths')
-        
-    return _model
-
 def captureAndResizedImage(imageSize, colorScale, metrics = False):
     timeStart = datetime.now()
     ret, camImage = cam.read()
     cv2.imshow('Imagem', camImage)
-    #cv2.waitKey(166) # ~6 frames per second
+    cv2.waitKey(60) # ~6 frames per second
     camImage = cv2.resize(camImage, imageSize)
     camImage = cv2.cvtColor(camImage, colorScale)
     x = image.img_to_array(camImage)
@@ -88,24 +77,6 @@ def captureAndResizedImage(imageSize, colorScale, metrics = False):
     if(metrics):
         calculeElapsedTime(timeStart, timeEnd, "Capture Image")
     return x
-
-def classVote(classValues, direction):
-  directionIndex = 1 if direction.lower() == 'y' else 0
-  values = []
-  for i in range(len(classValues)):
-    values.append(classValues[i][directionIndex])
-
-  highestOccurrency = 0
-  selectedClass = values[-1]
-
-  for occurrency in range(len(values)-1, -1 , -1):
-    counterOccurrency = values.count(values[occurrency])
-    if(counterOccurrency > highestOccurrency):
-      highestOccurrency = counterOccurrency
-      selectedClass = values[occurrency]
-
-  return selectedClass
-
 
    
 if __name__ == "__main__":
