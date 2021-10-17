@@ -10,11 +10,11 @@ def main():
     limitPredictions = 3
     infinity = True
     showMetrics = True
+    datasetArchitecture = DatasetArchitectureUtil('dronet')
 
     '''Load Models and Specify Architecture'''
     modelX = FileModel('models/exp_349_x', 'model_struct.json', 'model_weights_299.h5').compileModel()
     modelY = FileModel('models/exp_335_y', 'model_struct.json', 'model_weights_299.h5').compileModel()
-    datasetArchitecture = DatasetArchitectureUtil('dronet')
 
     '''Start Predict Process'''
     ClassificationUtil(cam, limitPredictions, datasetArchitecture, modelX, modelY, infinity, showMetrics).predictLoopProcess()
