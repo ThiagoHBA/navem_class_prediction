@@ -12,7 +12,7 @@ def main():
     showMetrics = True
     datasetArchitecture = DatasetArchitectureUtil('dronet')
 
-    '''Load Models and Specify Architecture'''
+    '''Load Models'''
     modelX = FileModel('models/exp_349_x', 'model_struct.json', 'model_weights_299.h5').compileModel()
     modelY = FileModel('models/exp_335_y', 'model_struct.json', 'model_weights_299.h5').compileModel()
 
