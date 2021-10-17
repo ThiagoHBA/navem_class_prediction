@@ -1,5 +1,5 @@
 from common.utils.file_model_util import FileModel
-from common.utils.dataset_util import FileDataset
+from common.utils.dataset_architecture_util import DatasetArchitectureUtil
 from common.utils.classification_util import ClassificationUtil
 from keras.preprocessing import image
 from datetime import datetime
@@ -13,14 +13,14 @@ def main():
 
     modelX = FileModel('models/exp_349_x', 'model_struct.json', 'model_weights_299.h5').compileModel()
     modelY = FileModel('models/exp_335_y', 'model_struct.json', 'model_weights_299.h5').compileModel()
-    
-    fileDataset = FileDataset('datasets','sidewalk_accy_all_datasets_classes_new_1630_00', 'dronet', '000001.jpg')
+    datasetArchitecture = DatasetArchitectureUtil('dronet')
+
     infinity = True
     showMetrics = True
     
-    predictLoopProcess(limitPredictions, fileDataset, modelX, modelY, infinity, showMetrics)
+    predictLoopProcess(limitPredictions, datasetArchitecture, modelX, modelY, infinity, showMetrics)
 
-def predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, infinity = False, metrics = False, loops = 1):
+def predictLoopProcess(limit, datasetArchitecture, kerasModelX, kerasModelY, infinity = False, metrics = False, loops = 1):
     classificationMethods = ClassificationUtil()
 
     for i in range(loops):
@@ -28,7 +28,7 @@ def predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, infinity = 
         timeStart = datetime.now()
         
         for j in range(limit):
-            resizedImage = captureAndResizedImage(fileDataset.getImageSize(), fileDataset.getImageColorScale())
+            resizedImage = captureAndResizedImage(datasetArchitecture.getImageSize(), datasetArchitecture.getImageColorScale())
             
             classX = predictImage(resizedImage, kerasModelX)
             classY = predictImage(resizedImage, kerasModelY)
@@ -44,7 +44,7 @@ def predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, infinity = 
             calculeElapsedTime(timeStart, timeEnd, "Class Result")
 
     if(infinity):
-        predictLoopProcess(limit, fileDataset, kerasModelX, kerasModelY, True, metrics ,loops)
+        predictLoopProcess(limit, datasetArchitecture, kerasModelX, kerasModelY, True, metrics ,loops)
 
 
 def calculeElapsedTime(timeStart, timeEnd, label = ''):
