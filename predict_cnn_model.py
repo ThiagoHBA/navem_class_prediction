@@ -1,7 +1,6 @@
 from common.utils.file_model_util import FileModel
 from common.utils.dataset_util import FileDataset
 from common.utils.classification_util import ClassificationUtil
-
 from keras.preprocessing import image
 from datetime import datetime
 import numpy as np
@@ -11,14 +10,11 @@ cam = cv2.VideoCapture(0)
 
 def main():
     limitPredictions = 3
-    
-    fileModelX = FileModel('models/exp_349_x', 'model_struct.json', 'model_weights_299.h5')
-    fileModelY = FileModel('models/exp_335_y', 'model_struct.json', 'model_weights_299.h5')
-    fileDataset = FileDataset('datasets','sidewalk_accy_all_datasets_classes_new_1630_00', 'dronet', '000001.jpg')
 
-    modelX = fileModelX.compileModel()
-    modelY = fileModelY.compileModel()
+    modelX = FileModel('models/exp_349_x', 'model_struct.json', 'model_weights_299.h5').compileModel()
+    modelY = FileModel('models/exp_335_y', 'model_struct.json', 'model_weights_299.h5').compileModel()
     
+    fileDataset = FileDataset('datasets','sidewalk_accy_all_datasets_classes_new_1630_00', 'dronet', '000001.jpg')
     infinity = True
     showMetrics = True
     
