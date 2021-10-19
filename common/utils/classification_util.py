@@ -3,8 +3,9 @@ from datetime import datetime
 from common.utils.image_util import ImageUtil
 import numpy as np
 import common.enum.classification_enum as classificationEnum
+import os
 class ClassificationUtil:
-    def __init__(self, cam, limit, datasetArchitecture, kerasModelX, kerasModelY, infinity = False, metrics = False, loops = 1):
+    def __init__(self, limit, datasetArchitecture, kerasModelX, kerasModelY, cam = None, path = None, infinity = False, metrics = False, loops = 1):
         self.cam = cam
         self.limit = limit
         self.datasetArchitecture = datasetArchitecture
@@ -13,14 +14,17 @@ class ClassificationUtil:
         self.infinity = infinity
         self.metrics = metrics
         self.loops = loops
+        self.path = path
 
-    def predictLoopProcess(self):
+    def realTimeLoopProcess(self):
         for i in range(self.loops):
+            print("\nReal Time Classification")
             classPredictions = []
             timeStart = datetime.now()
             
             for j in range(self.limit):
-                resizedImage = ImageUtil.captureAndResizedImage(self.cam, self.datasetArchitecture.getImageSize(), self.datasetArchitecture.getImageColorScale(), self.metrics)
+                if(self.cam != None):
+                    resizedImage = ImageUtil.captureAndResizedImage(self.cam, self.datasetArchitecture.getImageSize(), self.datasetArchitecture.getImageColorScale(), self.metrics)
 
                 classX = ImageUtil.predictImage(resizedImage, self.kerasModelX)
                 classY = ImageUtil.predictImage(resizedImage, self.kerasModelY)
@@ -36,7 +40,33 @@ class ClassificationUtil:
                 self.calculeClassificationElapsedTime(timeStart, timeEnd, "Class Result")
 
         if(self.infinity):
-            self.predictLoopProcess()
+            self.realTimeLoopProcess()
+
+    def filePredictProcess(self, start = 0):
+        if(self.path != None):
+            numberOfItens = self.__countFilesInDir(self.path)
+
+            for i in range(start, numberOfItens, self.limit):
+                print("\nFile Classification")
+                classPredictions = []
+                timeStart = datetime.now()
+
+                for j in range(self.limit):
+                    resizedImage = ImageUtil.openAndResizedImage(self.path + str(i + j) + '.jpg', self.datasetArchitecture.getImageSize(), self.datasetArchitecture.getImageColorScale(), self.metrics)
+                    
+                    classX = ImageUtil.predictImage(resizedImage, self.kerasModelX)
+                    classY = ImageUtil.predictImage(resizedImage, self.kerasModelY)
+
+                    classPredictions.append((np.argmax(classX), np.argmax(classY)))
+
+                self.__selectClassificationClass('x', classPredictions)
+                self.__selectClassificationClass('y', classPredictions)
+                
+                timeEnd = datetime.now()
+
+                if(self.metrics):
+                    self.calculeClassificationElapsedTime(timeStart, timeEnd, "File Predict Process ")
+
 
     @staticmethod
     def calculeClassificationElapsedTime(timeStart, timeEnd, label = ''):
@@ -44,19 +74,24 @@ class ClassificationUtil:
         print(label + "ElapsedTime in ms: {}".format((timeEnd-timeStart).microseconds / 1000))
         print("=" * 15 + "\n")
 
+    def __countFilesInDir(self, path: str) -> int:
+        file_entries = [entry for entry in os.scandir(path) if entry.is_file()]
+
+        return len(file_entries)
+
     def __selectClassificationClass(self,axis, value):
         if(axis.lower() == 'x'):
-            self.__handleClassificationValue(classificationEnum.LinearClassificationClass, self.__classVote(value, 'x'))
+            self.__handleClassificationValue("Linear: ", classificationEnum.LinearClassificationClass, self.__classVote(value, 'x'))
         else:
-            self.__handleClassificationValue(classificationEnum.SidesClassificationClass, self.__classVote(value, 'y'))
+            self.__handleClassificationValue("Lateral: ", classificationEnum.SidesClassificationClass, self.__classVote(value, 'y'))
 
-    def __handleClassificationValue(self,enum ,value):
+    def __handleClassificationValue(self, type, enum ,value):
         try:
             result = enum(value)
-            print("=" * 30)
-            print(result.name)
-            print("=" * 30)
-            sleep(0.15 * result.value + 1)
+            print("~" * 30)
+            print(type + result.name)
+            print("~" * 30)
+            #sleep(0.15 * result.value + 1)
         except:
             print("Class value has not been mapped yet")
 
