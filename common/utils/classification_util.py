@@ -34,7 +34,7 @@ class ClassificationUtil:
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
                     imageIndex += 1
 
-            logs.writeLog(self.classificationToMap(imageIndex, self.__selectClassificationClass('x', classPredictions), self.__selectClassificationClass('y', classPredictions)))
+            logs.writeLog(self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions)))
             timeEnd = datetime.now()
 
             if(self.metrics):
@@ -64,7 +64,7 @@ class ClassificationUtil:
                     classY = ImageUtil.predictImage(resizedImage, self.kerasModelY)
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
 
-                logs.writeLog(self.classificationToMap(imageIndex, self.__selectClassificationClass('x', classPredictions), self.__selectClassificationClass('y', classPredictions)))
+                logs.writeLog(self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions)))
                 
                 timeEnd = datetime.now()
                 if(self.metrics):
@@ -87,29 +87,7 @@ class ClassificationUtil:
             },
         }
 
-    def __countFilesInDir(self, path: str) -> int:
-        file_entries = [entry for entry in os.scandir(path) if entry.is_file()]
-
-        return len(file_entries)
-
-    def __selectClassificationClass(self, axis, value):
-        if(axis.lower() == 'x'):
-            return self.__handleClassificationValue("Linear: ", classificationEnum.LinearClassificationClass, self.__classVote(value, 'x'))
-        else:
-            return self.__handleClassificationValue("Lateral: ", classificationEnum.SidesClassificationClass, self.__classVote(value, 'y'))
-
-    def __handleClassificationValue(self, type, enum, value):
-        try:
-            result = enum(value)
-            print("~" * 30)
-            print(type + result.name)
-            print("~" * 30)
-            return result.name
-            #sleep(0.15 * result.value + 1)
-        except:
-            print("Class value has not been mapped yet")
-
-    def __classVote(self, classValues, direction):
+    def classVote(self, classValues, direction):
         directionIndex = 1 if direction.lower() == 'y' else 0
         values = []
         for i in range(len(classValues)):
@@ -125,3 +103,25 @@ class ClassificationUtil:
                 selectedClass = values[occurrency]
 
         return selectedClass
+
+    def selectClassificationClass(self, axis, value):
+        if(axis.lower() == 'x'):
+            return self.__handleClassificationValue("Linear: ", classificationEnum.LinearClassificationClass, self.classVote(value, 'x'))
+        else:
+            return self.__handleClassificationValue("Lateral: ", classificationEnum.SidesClassificationClass, self.classVote(value, 'y'))
+
+    def __countFilesInDir(self, path: str) -> int:
+        file_entries = [entry for entry in os.scandir(path) if entry.is_file()]
+
+        return len(file_entries)
+
+    def __handleClassificationValue(self, type, enum, value):
+        try:
+            result = enum(value)
+            print("~" * 30)
+            print(type + result.name)
+            print("~" * 30)
+            return result.name
+            #sleep(0.15 * result.value + 1)
+        except:
+            print("Class value has not been mapped yet")
