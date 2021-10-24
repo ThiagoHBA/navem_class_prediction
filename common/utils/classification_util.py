@@ -17,7 +17,11 @@ class ClassificationUtil:
         self.path = path
 
     def realTimeLoopProcess(self):
-        for i in range(self.loops):
+        logs = Files()
+        index = 0
+        imageIndex = 0
+        logs.initializeLog()
+        while index < self.loops:
             print("\nReal Time Classification")
             classPredictions = []
             timeStart = datetime.now()
@@ -28,16 +32,18 @@ class ClassificationUtil:
                     classX = ImageUtil.predictImage(resizedImage, self.kerasModelX)
                     classY = ImageUtil.predictImage(resizedImage, self.kerasModelY)
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
+                    imageIndex += 1
 
-            self.__selectClassificationClass('x', classPredictions)
-            self.__selectClassificationClass('y', classPredictions)
-
+            logs.writeLog(self.classificationToMap(imageIndex, self.__selectClassificationClass('x', classPredictions), self.__selectClassificationClass('y', classPredictions)))
             timeEnd = datetime.now()
+
             if(self.metrics):
                 self.calculeClassificationElapsedTime(timeStart, timeEnd, "Class Result")
 
         if(self.infinity):
-            self.realTimeLoopProcess()
+            index = 0
+        else:
+            index += 1
 
     def filePredictProcess(self, start=0):
         if(self.path != None):
