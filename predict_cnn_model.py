@@ -9,7 +9,7 @@ def main():
     limitPredictions  = 3
     infinity = True
     showMetrics = False
-    path = 'D:/Documentos/datasets/2020_06_25-16_03_09/'
+    path = ''
     datasetArchitecture = DatasetArchitectureUtil('dronet')
 
     modelX = FileModel('models/exp_349_x', 'model_struct.json', 'model_weights_299.h5').compileModel()
