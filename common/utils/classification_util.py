@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from keras.preprocessing import image
 from common.utils.files_util import Files
 from common.utils.image_util import ImageUtil
 import numpy as np
@@ -32,6 +34,7 @@ class ClassificationUtil:
                     classX = ImageUtil.predictImage(resizedImage, self.kerasModelX)
                     classY = ImageUtil.predictImage(resizedImage, self.kerasModelY)
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
+                    ImageUtil.saveImage(resizedImage, str(imageIndex), self.path)
                     imageIndex += 1
 
             logs.writeLog(self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions)))

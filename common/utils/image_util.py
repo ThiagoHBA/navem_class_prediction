@@ -1,5 +1,6 @@
 from keras.preprocessing import image
 from datetime import date, datetime
+from os import path
 import common.utils.classification_util as classificationModule
 import numpy as np
 import cv2
@@ -19,8 +20,8 @@ class ImageUtil:
         camImage = cam.read()
         ImageUtil.__showImage(camImage[1], 60)
         resizedImage = ImageUtil.__resizeImage(camImage[1], imageSize, colorScale)
-        timeEnd = datetime.now()
 
+        timeEnd = datetime.now()
         if(metrics):
             classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Capture Image")
         return resizedImage
@@ -36,6 +37,11 @@ class ImageUtil:
         if(metrics):
             classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Open Image")
         return resizedImage
+
+    @staticmethod
+    def saveImage(image, fileName: str, savePath = None):
+        if(savePath != None and path.isdir(savePath)):
+            cv2.imwrite(savePath + fileName + ".jpg", image)
 
     def __resizeImage(imageToResize, imageSize, colorScale):
         imageToResize = cv2.resize(imageToResize, imageSize)

@@ -1,0 +1,95 @@
+{
+    "logs": [
+        {
+            "index": 3,
+            "data": {
+                "linear": "SLIGHTLY_REDUCE",
+                "sides": "STRONG_SIDESTEP_RIGHT"
+            }
+        },
+        {
+            "index": 6,
+            "data": {
+                "linear": "SLIGHTLY_REDUCE",
+                "sides": "STRONG_SIDESTEP_RIGHT"
+            }
+        },
+        {
+            "index": 9,
+            "data": {
+                "linear": "SLIGHTLY_REDUCE",
+                "sides": "STRONG_SIDESTEP_RIGHT"
+            }
+        },
+        {
+            "index": 12,
+            "data": {
+                "linear": "SLIGHTLY_REDUCE",
+                "sides": "STRONG_SIDESTEP_RIGHT"
+            }
+        },
+        {
+            "index": 15,
+            "data": {
+                "linear": "SLIGHTLY_REDUCE",
+                "sides": "STRONG_SIDESTEP_RIGHT"
+            }
+        },
+        {
+            "index": 18,
+            "data": {
+                "linear": "SLIGHTLY_REDUCE",
+                "sides": "STRONG_SIDESTEP_RIGHT"
+            }
+        },
+        {
+            "index": 21,
+            "data": {
+                "linear": "SLIGHTLY_REDUCE",
+                "sides": "STRONG_SIDESTEP_RIGHT"
+            }
+        },
+        {
+            "index": 24,
+            "data": {
+                "linear": "SLIGHTLY_REDUCE",
+                "sides": "STRONG_SIDESTEP_RIGHT"
+            }
+        },
+        {
+            "index": 27,
+            "data": {
+                "linear": "SLIGHTLY_REDUCE",
+                "sides": "STRONG_SIDESTEP_RIGHT"
+            }
+        },
+        {
+            "index": 30,
+            "data": {
+                "linear": "SLIGHTLY_REDUCE",
+                "sides": "STRONG_SIDESTEP_RIGHT"
+            }
+        },
+        {
+            "index": 33,
+            "data": {
+                "linear": "SLIGHTLY_REDUCE",
+                "sides": "STRONG_SIDESTEP_RIGHT"
+            }
+        },
+        {
+            "index": 36,
+            "data": {
+                "linear": "SLIGHTLY_REDUCE",
+                "sides": "STRONG_SIDESTEP_LEFT"
+            }
+        },
+        {
+            "index": 39,
+            "data": {
+                "linear": "SLIGHTLY_REDUCE",
+                "sides": "STRONG_SIDESTEP_RIGHT"
+            }
+        }
+    ]
+}
