@@ -23,13 +23,14 @@ class Files:
         try:
             if experimentName != '':
                 os.mkdir('./experiments/' + experimentName)
+                return experimentName
             else:
-                raise Exception('Empty experiment name')
-            return experimentName
+                os.mkdir('./experiments/' + self.fileName)
+                return self.fileName
         except:
-            print("Its not possible to create the experiment with this name.")
-            os.mkdir('./experiments/' + self.fileName)
-            return self.fileName
+            print("Its not possible to create the experiment file, check if \'./experiment/' path exist.")
+            
+            
 
     def initializeLog(self):
         with open("logs/" + self.fileName + "_log.json", 'w') as logFile:
