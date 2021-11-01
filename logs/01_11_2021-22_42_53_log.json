@@ -1,44 +1,9 @@
 {
     "logs": [
         {
-            "index": 0,
-            "data": {
-                "linear": "URGENT_STOP",
-                "sides": "SLIGHTLY_SIDESTEP_LEFT"
-            }
-        },
-        {
-            "index": 1,
-            "data": {
-                "linear": "URGENT_STOP",
-                "sides": "SLIGHTLY_SIDESTEP_LEFT"
-            }
-        },
-        {
-            "index": 2,
-            "data": {
-                "linear": "REDUCE_A_LOT",
-                "sides": "SLIGHTLY_SIDESTEP_LEFT"
-            }
-        },
-        {
             "index": 3,
             "data": {
-                "linear": "URGENT_STOP",
-                "sides": "SLIGHTLY_SIDESTEP_LEFT"
-            }
-        },
-        {
-            "index": 4,
-            "data": {
                 "linear": "REDUCE_A_LOT",
-                "sides": "SLIGHTLY_SIDESTEP_LEFT"
-            }
-        },
-        {
-            "index": 5,
-            "data": {
-                "linear": "URGENT_STOP",
                 "sides": "SLIGHTLY_SIDESTEP_LEFT"
             }
         },
@@ -50,20 +15,6 @@
             }
         },
         {
-            "index": 7,
-            "data": {
-                "linear": "REDUCE_A_LOT",
-                "sides": "SLIGHTLY_SIDESTEP_LEFT"
-            }
-        },
-        {
-            "index": 8,
-            "data": {
-                "linear": "URGENT_STOP",
-                "sides": "SLIGHTLY_SIDESTEP_LEFT"
-            }
-        },
-        {
             "index": 9,
             "data": {
                 "linear": "URGENT_STOP",
@@ -71,37 +22,44 @@
             }
         },
         {
-            "index": 10,
+            "index": 12,
             "data": {
                 "linear": "URGENT_STOP",
                 "sides": "SLIGHTLY_SIDESTEP_LEFT"
             }
         },
         {
-            "index": 11,
+            "index": 15,
             "data": {
                 "linear": "REDUCE_A_LOT",
                 "sides": "SLIGHTLY_SIDESTEP_LEFT"
             }
         },
         {
-            "index": 12,
+            "index": 18,
             "data": {
                 "linear": "REDUCE_A_LOT",
                 "sides": "SLIGHTLY_SIDESTEP_LEFT"
             }
         },
         {
-            "index": 13,
+            "index": 21,
             "data": {
-                "linear": "REDUCE_A_LOT",
+                "linear": "URGENT_STOP",
                 "sides": "SLIGHTLY_SIDESTEP_LEFT"
             }
         },
         {
-            "index": 14,
+            "index": 24,
             "data": {
-                "linear": "REDUCE_A_LOT",
+                "linear": "URGENT_STOP",
+                "sides": "SLIGHTLY_SIDESTEP_LEFT"
+            }
+        },
+        {
+            "index": 27,
+            "data": {
+                "linear": "URGENT_STOP",
                 "sides": "SLIGHTLY_SIDESTEP_LEFT"
             }
         }

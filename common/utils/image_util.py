@@ -6,6 +6,7 @@ import numpy as np
 import cv2
 
 class ImageUtil:
+
     @staticmethod
     def predictImage(image, kerasModel):       
         np.set_printoptions(suppress=True)
@@ -15,12 +16,13 @@ class ImageUtil:
         return result
 
     @staticmethod
-    def captureAndResizedImage(cam, imageSize, colorScale, metrics = False):
+    def captureAndResizedImage(cam, imageSize, colorScale, fileName = None, experimentName = None, metrics = False):
         timeStart = datetime.now()
         camImage = cam.read()
         ImageUtil.__showImage(camImage[1], 60)
+        if(fileName != None and experimentName != None):
+            ImageUtil.saveImage(camImage[1], fileName, experimentName)
         resizedImage = ImageUtil.__resizeImage(camImage[1], imageSize, colorScale)
-
         timeEnd = datetime.now()
         if(metrics):
             classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Capture Image")
@@ -40,8 +42,9 @@ class ImageUtil:
 
     @staticmethod
     def saveImage(image, fileName: str, savePath = None):
-        if(savePath != None and path.isdir(savePath)):
-            cv2.imwrite(savePath + fileName + ".jpg", image)
+        experimentPath = './experiments/' + savePath
+        if(savePath != None and path.isdir(experimentPath)):
+            cv2.imwrite(experimentPath + '/' + fileName + ".jpg", image)
 
     def __resizeImage(imageToResize, imageSize, colorScale):
         imageToResize = cv2.resize(imageToResize, imageSize)
