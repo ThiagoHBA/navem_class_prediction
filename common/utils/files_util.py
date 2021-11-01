@@ -25,7 +25,6 @@ class Files:
                 os.mkdir('./experiments/' + experimentName)
             else:
                 raise Exception('Empty experiment name')
-                
             return experimentName
         except:
             print("Its not possible to create the experiment with this name.")
