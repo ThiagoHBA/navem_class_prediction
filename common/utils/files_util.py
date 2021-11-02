@@ -20,10 +20,9 @@ class Files:
 
         return loaded_model_json
     
-    def createExperimentFile(self):
+    def createExperimentFile(self, experimentName):
         if not os.path.isdir('experiments'):
             os.mkdir('experiments')
-        experimentName = str(input("Enter the experiment name: "))
         if experimentName != '':
             if os.path.isdir('./experiments/' + experimentName):
                 if not str(input("This path already exist, do you want to keep going? [y/n]: ")).lower() == 'y':
