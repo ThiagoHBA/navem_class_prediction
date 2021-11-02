@@ -7,12 +7,12 @@ import cv2
 cam = cv2.VideoCapture(0)
 
 def main():
-    experimentName = Files().createExperimentFile()
-    path = None
-    datasetArchitecture = DatasetArchitectureUtil('dronet')
     limitPredictions  = 3
+    datasetArchitecture = DatasetArchitectureUtil('dronet')
+    path = None
     infinity = True
     showMetrics = False
+    experimentName = Files().createExperimentFile(str(input("Enter the experiment name: ")))
     
     modelX = FileModel('models/exp_349_x', 'model_struct.json', 'model_weights_299.h5').compileModel()
     modelY = FileModel('models/exp_335_y', 'model_struct.json', 'model_weights_299.h5').compileModel()
