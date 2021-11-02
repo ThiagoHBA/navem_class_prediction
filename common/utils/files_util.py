@@ -1,15 +1,16 @@
 from datetime import datetime
 import os
 import json
+
 class Files:
     def __init__(self, fileName = datetime.utcnow().strftime("%d_%m_%Y-%H_%M_%S")):
         self.fileName = fileName
 
     @staticmethod
-    def findFile(fileName, path):
+    def findFile(fileToSearch, path):
         for root, dirs, files in os.walk(path):
-            if fileName in files:
-                return os.path.join(root, fileName)
+            if fileToSearch in files:
+                return os.path.join(root, fileToSearch)
     
     @staticmethod
     def jsonFile(json_model_path):
@@ -29,8 +30,6 @@ class Files:
                 return self.fileName
         except:
             print("Its not possible to create the experiment file, check if \'./experiment/' path exist.")
-            
-            
 
     def initializeLog(self):
         with open("logs/" + self.fileName + "_log.json", 'w') as logFile:
