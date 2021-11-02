@@ -17,6 +17,20 @@ class Files:
             loaded_model_json = json_file.read()
 
         return loaded_model_json
+    
+    def createExperimentFile(self):
+        experimentName = str(input("Enter the experiment name: "))
+        try:
+            if experimentName != '':
+                os.mkdir('./experiments/' + experimentName)
+                return experimentName
+            else:
+                os.mkdir('./experiments/' + self.fileName)
+                return self.fileName
+        except:
+            print("Its not possible to create the experiment file, check if \'./experiment/' path exist.")
+            
+            
 
     def initializeLog(self):
         with open("logs/" + self.fileName + "_log.json", 'w') as logFile:
