@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 
 #Logs and experiments
-.logs/
-.experiments/
+logs/
+experiments/
