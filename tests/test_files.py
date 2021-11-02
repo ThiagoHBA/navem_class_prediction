@@ -17,8 +17,9 @@ class FilesTest(unittest.TestCase):
         self.assertEqual(os.path.exists('logs/UnitTestFile_log.json'), True)
 
     def test_Experiment(self):
-        self.filesObject.createExperimentFile()
-        sys.stdin(StringIO("UnitTestExperiment"))
+        self.filesObject.createExperimentFile('UnitTestExperiment')
+        self.assertEqual(os.path.isdir('experiments'), True)
+        self.assertEqual(os.path.isdir('experiments/UnitTestExperiment'), True)
         
 
 if __name__ == '__main__':
