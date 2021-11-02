@@ -41,11 +41,8 @@ class ClassificationUtil:
 
             if(self.metrics):
                 self.calculeClassificationElapsedTime(timeStart, timeEnd, "Class Result")
-
-        if(self.infinity):
-            index = 0
-        else:
-            index += 1
+                
+            index = 0 if(self.infinity) else index + 1
 
     def filePredictProcess(self, start=0):
         if(self.path != None):
