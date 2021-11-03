@@ -7,7 +7,7 @@ import numpy as np
 import common.enum.classification_enum as classificationEnum
 import os
 class ClassificationUtil:
-    def __init__(self, limit, datasetArchitecture, kerasModelX, kerasModelY, cam=None, path=None, experimentName = None, infinity=False, metrics=False, loops=1):
+    def __init__(self, kerasModelX, kerasModelY, limit, datasetArchitecture, cam=None, experimentName = None, infinity=False, metrics=False, loops=1):
         self.cam = cam
         self.limit = limit
         self.datasetArchitecture = datasetArchitecture
@@ -16,7 +16,6 @@ class ClassificationUtil:
         self.infinity = infinity
         self.metrics = metrics
         self.loops = loops
-        self.path = path
         self.experimentName = experimentName
         self.logs = self.__generateLogFile()
 
@@ -44,9 +43,9 @@ class ClassificationUtil:
                 
             index = 0 if(self.infinity) else index + 1
 
-    def filePredictProcess(self, start=0):
-        if(self.path != None):
-            numberOfItens = self.__countFilesInDir(self.path)
+    def filePredictProcess(self, path = None, start=0):
+        if(path != None):
+            numberOfItens = self.__countFilesInDir(path)
             imageIndex = 0
             for i in range(start, numberOfItens, self.limit):
                 print("\nFile Classification")
