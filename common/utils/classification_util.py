@@ -7,7 +7,7 @@ import numpy as np
 import common.enum.classification_enum as classificationEnum
 import os
 class ClassificationUtil:
-    def __init__(self, kerasModelX, kerasModelY, limit, datasetArchitecture, cam=None, experimentName = None, infinity=False, metrics=False, loops=1):
+    def __init__(self, kerasModelX, kerasModelY, limit, datasetArchitecture, cam=None, infinity=False, metrics=False, loops=1):
         self.cam = cam
         self.limit = limit
         self.datasetArchitecture = datasetArchitecture
@@ -16,12 +16,13 @@ class ClassificationUtil:
         self.infinity = infinity
         self.metrics = metrics
         self.loops = loops
-        self.experimentName = experimentName
+        self.experimentName = str(input("Enter the experiment name: "))
         self.logs = self.__generateLogFile()
 
     def realTimeLoopProcess(self):
         index = 0
         imageIndex = 0
+        Files().createExperimentFile(self.experimentName)
         while index < self.loops:
             print("\nReal Time Classification")
             classPredictions = []

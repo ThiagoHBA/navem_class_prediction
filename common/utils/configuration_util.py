@@ -8,6 +8,7 @@ class ConfigurationUtil:
         self.loops = loops
         self.showMetrics = showMetrics
         self.datasetArchitecture = datasetArchitecture
+        self.checkIfUpdateConfigurations();
 
     @staticmethod
     def configurationUtilToMap(limitPredictions, infinity, loops, showMetrics, datasetArchitecture):
@@ -33,7 +34,11 @@ class ConfigurationUtil:
         self.infinity = self._updateBoolean('infinity classification', self.infinity)
         self.loops = self._updateInteger('loops quantity', self.loops)
         self.showMetrics = self._updateBoolean('show metrics', self.showMetrics)
-        self.datasetArchitecture = DatasetArchitectureUtil(self._updateString('dataset architecture', self.datasetArchitecture))
+        self.datasetArchitecture = DatasetArchitectureUtil(self._updateString('dataset architecture', self.datasetArchitecture.architecture))
+
+    def checkIfUpdateConfigurations(self):        
+        if not str(input("Continue with default configurations? [y/n]: ")).lower() == 'y':
+            self.updateConfigurations();
 
     def _updateInteger(self, title, currentValue):
         if str(input("\nUptade the " + title + "? [y/n]: ")).lower() == 'y':
