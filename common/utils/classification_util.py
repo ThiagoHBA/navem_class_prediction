@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from keras.preprocessing import image
 from common.utils.files_util import Files
 from common.utils.image_util import ImageUtil
@@ -7,7 +6,7 @@ import numpy as np
 import common.enum.classification_enum as classificationEnum
 import os
 class ClassificationUtil:
-    def __init__(self, kerasModelX, kerasModelY, limit, datasetArchitecture, cam=None, infinity=False, metrics=False, loops=1):
+    def __init__(self, kerasModelX, kerasModelY, limit, datasetArchitecture, cam=None, infinity=False, metrics=False, loops=1, showPreview = False):
         self.cam = cam
         self.limit = limit
         self.datasetArchitecture = datasetArchitecture
@@ -16,6 +15,7 @@ class ClassificationUtil:
         self.infinity = infinity
         self.metrics = metrics
         self.loops = loops
+        self.showPreview = showPreview
         self.experimentName = str(input("Enter the experiment name: "))
         self.logs = self.__generateLogFile()
 
@@ -30,7 +30,7 @@ class ClassificationUtil:
 
             for j in range(self.limit):
                 if(self.cam != None):
-                    resizedImage = ImageUtil.captureAndResizedImage(self.cam, self.datasetArchitecture.getImageSize(), self.datasetArchitecture.getImageColorScale(), str(imageIndex).zfill(5), self.experimentName, self.metrics)
+                    resizedImage = ImageUtil.captureAndResizedImage(self.cam, self.datasetArchitecture.getImageSize(), self.datasetArchitecture.getImageColorScale(), str(imageIndex).zfill(5), self.experimentName, self.metrics, self.showPreview)
                     classX = ImageUtil.predictImage(resizedImage, self.kerasModelX)
                     classY = ImageUtil.predictImage(resizedImage, self.kerasModelY)
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
@@ -55,7 +55,7 @@ class ClassificationUtil:
                 imageIndex = i
 
                 for j in range(self.limit):
-                    resizedImage = ImageUtil.openAndResizedImage(self.path + str(i + j) + '.jpg', self.datasetArchitecture.getImageSize(), self.datasetArchitecture.getImageColorScale(), self.metrics)
+                    resizedImage = ImageUtil.openAndResizedImage(self.path + str(i + j) + '.jpg', self.datasetArchitecture.getImageSize(), self.datasetArchitecture.getImageColorScale(), self.metrics, self.showPreview)
                     classX = ImageUtil.predictImage(resizedImage, self.kerasModelX)
                     classY = ImageUtil.predictImage(resizedImage, self.kerasModelY)
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))

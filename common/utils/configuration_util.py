@@ -2,12 +2,13 @@ from common.utils.dataset_architecture_util import DatasetArchitectureUtil
 
 
 class ConfigurationUtil:
-    def __init__(self, limitPredictions = 3, infinity = True, loops = 1, showMetrics = False, datasetArchitecture = DatasetArchitectureUtil('dronet')):
+    def __init__(self, limitPredictions = 3, infinity = True, loops = 1, showMetrics = False, datasetArchitecture = DatasetArchitectureUtil('dronet'), showPreview = False):
         self.limitPredictions = limitPredictions
         self.infinity = infinity
         self.loops = loops
         self.showMetrics = showMetrics
         self.datasetArchitecture = datasetArchitecture
+        self.showPreview = showPreview
         self.checkIfUpdateConfigurations();
 
     @staticmethod
@@ -27,6 +28,7 @@ class ConfigurationUtil:
         print("Loops quantity: {}".format(self.loops))
         print("Show metrics: {}".format(self.showMetrics))
         print("Dataset architecture: {}".format(self.datasetArchitecture.architecture))
+        print("Show preview: {}".format(self.showPreview))
         
     def updateConfigurations(self):
         self.showConfigurations()
@@ -35,6 +37,7 @@ class ConfigurationUtil:
         self.loops = self._updateInteger('loops quantity', self.loops)
         self.showMetrics = self._updateBoolean('show metrics', self.showMetrics)
         self.datasetArchitecture = DatasetArchitectureUtil(self._updateString('dataset architecture', self.datasetArchitecture.architecture))
+        self.showPreview = self._updateBoolean('show preview', self.showPreview)
 
     def checkIfUpdateConfigurations(self):        
         if not str(input("Continue with default configurations? [y/n]: ")).lower() == 'y':
