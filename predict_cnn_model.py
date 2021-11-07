@@ -1,23 +1,15 @@
+from common.utils.configuration_util import ConfigurationUtil
 from common.utils.file_model_util import FileModel
-from common.utils.dataset_architecture_util import DatasetArchitectureUtil
 from common.utils.classification_util import ClassificationUtil
-from common.utils.files_util import Files
 import cv2
 
 cam = cv2.VideoCapture(0)
 
 def main():
-    limitPredictions  = 3
-    datasetArchitecture = DatasetArchitectureUtil('dronet')
-    path = None
-    infinity = True
-    showMetrics = False
-    experimentName = Files().createExperimentFile(str(input("Enter the experiment name: ")))
-    
+    configurations = ConfigurationUtil()
     modelX = FileModel('models/exp_349_x', 'model_struct.json', 'model_weights_299.h5').compileModel()
     modelY = FileModel('models/exp_335_y', 'model_struct.json', 'model_weights_299.h5').compileModel()
-
-    ClassificationUtil(limitPredictions, datasetArchitecture, modelX, modelY, cam, path, experimentName, infinity, showMetrics).realTimeLoopProcess()
+    ClassificationUtil(modelX, modelY, configurations.limitPredictions, configurations.datasetArchitecture, cam, configurations.infinity, configurations.showMetrics, configurations.loops, configurations.showPreview).realTimeLoopProcess()
        
 if __name__ == "__main__":
     main()

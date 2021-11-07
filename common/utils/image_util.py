@@ -16,10 +16,11 @@ class ImageUtil:
         return result
 
     @staticmethod
-    def captureAndResizedImage(cam, imageSize, colorScale, fileName = None, experimentName = None, metrics = False):
+    def captureAndResizedImage(cam, imageSize, colorScale, fileName = None, experimentName = None, metrics = False, showPreview = False):
         timeStart = datetime.now()
         camImage = cam.read()
-        ImageUtil.__showImage(camImage[1], 60)
+        if(showPreview):
+            ImageUtil.__showImage(camImage[1], 60)
         if(fileName != None and experimentName != None):
             ImageUtil.saveImage(camImage[1], fileName, experimentName)
         resizedImage = ImageUtil.__resizeImage(camImage[1], imageSize, colorScale)
@@ -29,10 +30,11 @@ class ImageUtil:
         return resizedImage
 
     @staticmethod
-    def openAndResizedImage(path, imageSize, colorScale, metrics = False):
+    def openAndResizedImage(path, imageSize, colorScale, metrics = False, showPreview = False):
         timeStart = datetime.now()
         image = cv2.imread(path)
-        ImageUtil.__showImage(image, 1)
+        if(showPreview):
+            ImageUtil.__showImage(image, 1)
         resizedImage = ImageUtil.__resizeImage(image, imageSize, colorScale)
         timeEnd = datetime.now()
 
