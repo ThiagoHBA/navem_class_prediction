@@ -6,7 +6,7 @@ import numpy as np
 import common.enum.classification_enum as classificationEnum
 import os
 class ClassificationUtil:
-    def __init__(self, kerasModelX, kerasModelY, limit, datasetArchitecture, cam=None, infinity=False, metrics=False, loops=1, showPreview = False):
+    def __init__(self, kerasModelX, kerasModelY, limit, datasetArchitecture, cam=None, infinity=False, metrics=False, loops=1, showPreview = False , experimentName = None):
         self.cam = cam
         self.limit = limit
         self.datasetArchitecture = datasetArchitecture
@@ -16,7 +16,7 @@ class ClassificationUtil:
         self.metrics = metrics
         self.loops = loops
         self.showPreview = showPreview
-        self.experimentName = str(input("Enter the experiment name: "))
+        self.experimentName = experimentName if experimentName != None else str(input("Enter the experiment name: "))
         self.logs = self.__generateLogFile()
 
     def realTimeLoopProcess(self):
