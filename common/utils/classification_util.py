@@ -22,7 +22,7 @@ class ClassificationUtil:
     def realTimeLoopProcess(self):
         index = 0
         imageIndex = 0
-        Files().createExperimentFile(self.experimentName)
+        self.experimentName = Files().createExperimentFile(self.experimentName)
         while index < self.loops:
             print("\nReal Time Classification")
             classPredictions = []
