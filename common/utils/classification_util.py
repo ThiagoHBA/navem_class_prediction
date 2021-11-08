@@ -22,13 +22,13 @@ class ClassificationUtil:
     def realTimeLoopProcess(self):
         index = 0
         imageIndex = 0
+        classPredictions = []
         self.experimentName = Files().createExperimentFile(self.experimentName)
         while index < self.loops:
             print("\nReal Time Classification")
-            classPredictions = []
             timeStart = datetime.now()
 
-            for j in range(self.limit):
+            while len(classPredictions) < self.limit:
                 if(self.cam != None):
                     resizedImage = ImageUtil.captureAndResizedImage(self.cam, self.datasetArchitecture.getImageSize(), self.datasetArchitecture.getImageColorScale(), str(imageIndex).zfill(5), self.experimentName, self.metrics, self.showPreview)
                     classX = ImageUtil.predictImage(resizedImage, self.kerasModelX)
@@ -41,7 +41,8 @@ class ClassificationUtil:
 
             if(self.metrics):
                 self.calculeClassificationElapsedTime(timeStart, timeEnd, "Class Result")
-                
+
+            classPredictions.pop(0)
             index = 0 if(self.infinity) else index + 1
 
     def filePredictProcess(self, path = None, start=0):
