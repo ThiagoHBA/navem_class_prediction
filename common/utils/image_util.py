@@ -1,6 +1,7 @@
 from keras.preprocessing import image
 from datetime import date, datetime
-from os import path
+from os import path, times
+from time import sleep
 import common.utils.classification_util as classificationModule
 import numpy as np
 import cv2
@@ -16,14 +17,19 @@ class ImageUtil:
         return result
 
     @staticmethod
-    def captureAndResizedImage(cam, imageSize, colorScale, fileName = None, experimentName = None, metrics = False, showPreview = False):
+    def captureAndResizedImage(cam, imageSize, colorScale, fileName = None, experimentName = None, metrics = False, showPreview = False, framerate = 10):
         timeStart = datetime.now()
         camImage = cam.read()
+        
         if(showPreview):
             ImageUtil.__showImage(camImage[1], 60)
         if(fileName != None and experimentName != None):
             ImageUtil.saveImage(camImage[1], fileName, experimentName)
+
         resizedImage = ImageUtil.__resizeImage(camImage[1], imageSize, colorScale)
+        loadImageTime = (datetime.now() - timeStart).microseconds / 1000000
+        ImageUtil.__waitFrameTime(framerate, loadImageTime)
+
         timeEnd = datetime.now()
         if(metrics):
             classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Capture Image")
@@ -37,7 +43,6 @@ class ImageUtil:
             ImageUtil.__showImage(image, 1)
         resizedImage = ImageUtil.__resizeImage(image, imageSize, colorScale)
         timeEnd = datetime.now()
-
         if(metrics):
             classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Open Image")
         return resizedImage
@@ -47,6 +52,11 @@ class ImageUtil:
         experimentPath = './experiments/' + savePath
         if(savePath != None and path.isdir(experimentPath)):
             cv2.imwrite(experimentPath + '/' + fileName + ".jpg", image)
+
+    def __waitFrameTime(framerate, imageCaptureTime):
+        total = (1/framerate) - imageCaptureTime
+        if(total > 0):
+            sleep(total) 
 
     def __resizeImage(imageToResize, imageSize, colorScale):
         imageToResize = cv2.resize(imageToResize, imageSize)
