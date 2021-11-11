@@ -19,7 +19,7 @@ class ClassificationUtil:
         self.experimentName = experimentName if experimentName != None else str(input("Enter the experiment name: "))
         self.logs = self.__generateLogFile()
 
-    def realTimeLoopProcess(self):
+    def realTimeLoopProcess(self, framerate = 6):
         index = 0
         imageIndex = 0
         classPredictions = []
@@ -30,7 +30,7 @@ class ClassificationUtil:
 
             while len(classPredictions) < self.limit:
                 if(self.cam != None):
-                    resizedImage = ImageUtil.captureAndResizedImage(self.cam, self.datasetArchitecture.getImageSize(), self.datasetArchitecture.getImageColorScale(), str(imageIndex).zfill(5), self.experimentName, self.metrics, self.showPreview)
+                    resizedImage = ImageUtil.captureAndResizedImage(self.cam, self.datasetArchitecture.getImageSize(), self.datasetArchitecture.getImageColorScale(), str(imageIndex).zfill(5), self.experimentName, self.metrics, self.showPreview, framerate)
                     classX = ImageUtil.predictImage(resizedImage, self.kerasModelX)
                     classY = ImageUtil.predictImage(resizedImage, self.kerasModelY)
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))

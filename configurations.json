@@ -2,7 +2,7 @@
     "limitPredictions": 3,
     "infinity": true,
     "loops": 1,
-    "showMetrics": false,
+    "showMetrics": true,
     "datasetArchitecture": "dronet",
     "showPreview": false
 }
