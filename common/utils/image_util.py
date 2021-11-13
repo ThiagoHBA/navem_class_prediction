@@ -7,7 +7,6 @@ import numpy as np
 import cv2
 
 class ImageUtil:
-
     @staticmethod
     def predictImage(image, kerasModel):       
         np.set_printoptions(suppress=True)
@@ -17,23 +16,44 @@ class ImageUtil:
         return result
 
     @staticmethod
-    def captureAndResizedImage(cam, imageSize, colorScale, fileName = None, experimentName = None, metrics = False, showPreview = False, framerate = 10):
+    def captureImage(cam, metrics = False, showPreview = False, framerate = 10):
         timeStart = datetime.now()
+
         camImage = cam.read()
-        
         if(showPreview):
             ImageUtil.__showImage(camImage[1], 60)
-        if(fileName != None and experimentName != None):
-            ImageUtil.saveImage(camImage[1], fileName, experimentName)
 
-        resizedImage = ImageUtil.__resizeImage(camImage[1], imageSize, colorScale)
         loadImageTime = (datetime.now() - timeStart).microseconds / 1000000
         ImageUtil.__waitFrameTime(framerate, loadImageTime)
 
         timeEnd = datetime.now()
+
         if(metrics):
             classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Capture Image")
-        return resizedImage
+
+        return camImage[1]
+
+    @staticmethod
+    def resizeImage(image, imageSize, colorScale):
+        return ImageUtil.__resizeImage(image, imageSize, colorScale)
+
+    @staticmethod
+    def saveImage(image, fileName: str, savePath = None):
+        experimentPath = './experiments/' + savePath
+        if(savePath != None and path.isdir(experimentPath)):
+            cv2.imwrite(experimentPath + '/' + fileName + ".jpg", image)
+
+    @staticmethod
+    def writeTextInImage(image, org, imageText: str, fontColor = (0,0,0)):
+        if(imageText != None):
+            font                   = cv2.FONT_HERSHEY_SIMPLEX
+            fontScale              = 1
+            thickness              = 2
+            lineType               = 2
+            
+            cv2.putText(image, imageText, org, font, fontScale, fontColor, thickness, lineType)
+        
+        return image
 
     @staticmethod
     def openAndResizedImage(path, imageSize, colorScale, metrics = False, showPreview = False):
@@ -46,12 +66,6 @@ class ImageUtil:
         if(metrics):
             classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Open Image")
         return resizedImage
-
-    @staticmethod
-    def saveImage(image, fileName: str, savePath = None):
-        experimentPath = './experiments/' + savePath
-        if(savePath != None and path.isdir(experimentPath)):
-            cv2.imwrite(experimentPath + '/' + fileName + ".jpg", image)
 
     def __waitFrameTime(framerate, imageCaptureTime):
         total = (1/framerate) - imageCaptureTime
