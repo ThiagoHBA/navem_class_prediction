@@ -4,6 +4,6 @@
     "loops": 1,
     "showMetrics": false,
     "datasetArchitecture": "dronet",
-    "showPreview": true,
+    "showPreview": false,
     "logOnImage": true
 }
