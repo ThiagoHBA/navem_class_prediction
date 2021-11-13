@@ -44,6 +44,18 @@ class ImageUtil:
             cv2.imwrite(experimentPath + '/' + fileName + ".jpg", image)
 
     @staticmethod
+    def writeTextInImage(image, org, imageText: str, fontColor = (0,0,0)):
+        if(imageText != None):
+            font                   = cv2.FONT_HERSHEY_SIMPLEX
+            fontScale              = 1
+            thickness              = 2
+            lineType               = 2
+            
+            cv2.putText(image, imageText, org, font, fontScale, fontColor, thickness, lineType)
+        
+        return image
+
+    @staticmethod
     def openAndResizedImage(path, imageSize, colorScale, metrics = False, showPreview = False):
         timeStart = datetime.now()
         image = cv2.imread(path)
