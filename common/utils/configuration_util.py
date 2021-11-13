@@ -8,19 +8,20 @@ class ConfigurationUtil:
         self.checkIfUpdateConfigurations();
 
     @staticmethod
-    def configurationUtilToMap(limitPredictions, infinity, loops, showMetrics, datasetArchitecture, showPreview):
+    def configurationUtilToMap(limitPredictions, infinity, loops, showMetrics, datasetArchitecture, showPreview, logOnImage):
         return {
             "limitPredictions": limitPredictions,
             "infinity": infinity,
             "loops": loops,
             "showMetrics": showMetrics,
             "datasetArchitecture": datasetArchitecture,
-            "showPreview": showPreview
+            "showPreview": showPreview,
+            "logOnImage": logOnImage,
         }
         
     @staticmethod
     def configurationUtilFromMap(map):
-        return ConfigurationUtil(map['limitPredictions'], map['infinity'], map['loops'], map['showMetrics'], DatasetArchitectureUtil(map['datasetArchitecture'], map['showPreview']))
+        return ConfigurationUtil(map['limitPredictions'], map['infinity'], map['loops'], map['showMetrics'], DatasetArchitectureUtil(map['datasetArchitecture'], map['showPreview'], map['logOnImage']))
 
     def showConfigurations(self):
         print("\nCurrent values: \n")
@@ -30,6 +31,7 @@ class ConfigurationUtil:
         print("Show metrics: {}".format(self.showMetrics))
         print("Dataset architecture: {}".format(self.datasetArchitecture.architecture))
         print("Show preview: {}".format(self.showPreview))
+        print("logOnImage: {}".format(self.logOnImage))
         
     def updateConfigurations(self):
         self.showConfigurations()
@@ -39,12 +41,13 @@ class ConfigurationUtil:
         self.showMetrics = self.__updateBoolean('show metrics', self.showMetrics)
         self.datasetArchitecture = DatasetArchitectureUtil(self.__updateString('dataset architecture', self.datasetArchitecture.architecture))
         self.showPreview = self.__updateBoolean('show preview', self.showPreview)
+        self.logOnImage = self.__updateBoolean('log on image', self.logOnImage)
         self.checkIfSaveConfigurations()
 
     def saveConfigurations(self):
         if self.__checkIfConfigurationExist():
             with open("configurations.json", 'w') as configurationFile:
-                json.dump(self.configurationUtilToMap(self.limitPredictions, self.infinity, self.loops, self.showMetrics, self.datasetArchitecture.architecture, self.showPreview), configurationFile, indent = 4)
+                json.dump(self.configurationUtilToMap(self.limitPredictions, self.infinity, self.loops, self.showMetrics, self.datasetArchitecture.architecture, self.showPreview, self.logOnImage), configurationFile, indent = 4)
                 print("\nSuccessfully save...")
                 
     def checkIfUpdateConfigurations(self):        
@@ -62,6 +65,7 @@ class ConfigurationUtil:
         self.showMetrics = map['showMetrics']
         self.datasetArchitecture = DatasetArchitectureUtil(map['datasetArchitecture'])
         self.showPreview = map['showPreview']
+        self.logOnImage = map['logOnImage']
 
     def __updateInteger(self, title, currentValue):
         if str(input("\nUptade the " + title + "? [y/n]: ")).lower() == 'y':
@@ -96,7 +100,8 @@ class ConfigurationUtil:
                 self.showMetrics = False
                 self.datasetArchitecture = DatasetArchitectureUtil('dronet')
                 self.showPreview = False
-                json.dump(self.configurationUtilToMap(self.limitPredictions, self.infinity, self.loops, self.showMetrics, self.datasetArchitecture.architecture, self.showPreview), configurationFile, indent = 4)
+                self.logOnImage = True
+                json.dump(self.configurationUtilToMap(self.limitPredictions, self.infinity, self.loops, self.showMetrics, self.datasetArchitecture.architecture, self.showPreview, self.logOnImage), configurationFile, indent = 4)
             return configurationFile
         with open("configurations.json", 'r+') as configurationFile:
             self.__updateConfigurationValues(json.load(configurationFile))

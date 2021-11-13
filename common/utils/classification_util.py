@@ -6,7 +6,7 @@ import numpy as np
 import common.enum.classification_enum as classificationEnum
 import os
 class ClassificationUtil:
-    def __init__(self, kerasModelX, kerasModelY, limit, datasetArchitecture, cam=None, infinity=False, metrics=False, loops=1, showPreview = False , experimentName = None):
+    def __init__(self, kerasModelX, kerasModelY, limit, datasetArchitecture, cam=None, infinity=False, metrics=False, loops=1, showPreview = False , experimentName = None, logOnImage = True):
         self.cam = cam
         self.limit = limit
         self.datasetArchitecture = datasetArchitecture
@@ -16,6 +16,7 @@ class ClassificationUtil:
         self.metrics = metrics
         self.loops = loops
         self.showPreview = showPreview
+        self.logOnImage = logOnImage
         self.experimentName = experimentName if experimentName != None else str(input("Enter the experiment name: "))
         self.logs = self.__generateLogFile()
 
@@ -30,10 +31,15 @@ class ClassificationUtil:
 
             while len(classPredictions) < self.limit:
                 if(self.cam != None):
-                    resizedImage = ImageUtil.captureAndResizedImage(self.cam, self.datasetArchitecture.getImageSize(), self.datasetArchitecture.getImageColorScale(), str(imageIndex).zfill(5), self.experimentName, self.metrics, self.showPreview, framerate)
+                    capturedImage = ImageUtil.captureImage(self.cam, self.metrics, self.showPreview, framerate)
+                    resizedImage = ImageUtil.resizeImage(capturedImage, self.datasetArchitecture.getImageSize(),  self.datasetArchitecture.getImageColorScale())
+                    ImageUtil.saveImage(capturedImage, str(imageIndex).zfill(5), self.experimentName)
+
                     classX = ImageUtil.predictImage(resizedImage, self.kerasModelX)
                     classY = ImageUtil.predictImage(resizedImage, self.kerasModelY)
+                    
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
+
                     imageIndex += 1
 
             self.logs.writeLog(self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions)))
