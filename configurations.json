@@ -4,7 +4,7 @@
     "loops": 1,
     "showMetrics": false,
     "fps": 6,
-    "datasetArchitecture": "resnet",
-    "showPreview": true,
+    "datasetArchitecture": "dronet",
+    "showPreview": false,
     "logOnImage": true
 }

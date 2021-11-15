@@ -8,12 +8,13 @@ class ConfigurationUtil:
         self.checkIfUpdateConfigurations();
 
     @staticmethod
-    def configurationUtilToMap(limitPredictions, infinity, loops, showMetrics, datasetArchitecture, showPreview, logOnImage):
+    def configurationUtilToMap(limitPredictions, infinity, loops, showMetrics, fps, datasetArchitecture, showPreview, logOnImage):
         return {
             "limitPredictions": limitPredictions,
             "infinity": infinity,
             "loops": loops,
             "showMetrics": showMetrics,
+            "fps": fps,
             "datasetArchitecture": datasetArchitecture,
             "showPreview": showPreview,
             "logOnImage": logOnImage,
@@ -21,7 +22,7 @@ class ConfigurationUtil:
         
     @staticmethod
     def configurationUtilFromMap(map):
-        return ConfigurationUtil(map['limitPredictions'], map['infinity'], map['loops'], map['showMetrics'], DatasetArchitectureUtil(map['datasetArchitecture'], map['showPreview'], map['logOnImage']))
+        return ConfigurationUtil(map['limitPredictions'], map['infinity'], map['loops'], map['showMetrics'], map['fps'], DatasetArchitectureUtil(map['datasetArchitecture'], map['showPreview'], map['logOnImage']))
 
     def showConfigurations(self):
         print("\nCurrent values: \n")
@@ -29,6 +30,7 @@ class ConfigurationUtil:
         print("Infinity Classification: {}".format(self.infinity))
         print("Loops quantity: {}".format(self.loops))
         print("Show metrics: {}".format(self.showMetrics))
+        print("FPS: {}".format(self.fps))
         print("Dataset architecture: {}".format(self.datasetArchitecture.architecture))
         print("Show preview: {}".format(self.showPreview))
         print("logOnImage: {}".format(self.logOnImage))
@@ -39,6 +41,7 @@ class ConfigurationUtil:
         self.infinity = self.__updateBoolean('infinity classification', self.infinity)
         self.loops = self.__updateInteger('loops quantity', self.loops)
         self.showMetrics = self.__updateBoolean('show metrics', self.showMetrics)
+        self.fps = self.__updateInteger('fps', self.fps)
         self.datasetArchitecture = DatasetArchitectureUtil(self.__updateString('dataset architecture', self.datasetArchitecture.architecture))
         self.showPreview = self.__updateBoolean('show preview', self.showPreview)
         self.logOnImage = self.__updateBoolean('log on image', self.logOnImage)
@@ -47,7 +50,7 @@ class ConfigurationUtil:
     def saveConfigurations(self):
         if self.__checkIfConfigurationExist():
             with open("configurations.json", 'w') as configurationFile:
-                json.dump(self.configurationUtilToMap(self.limitPredictions, self.infinity, self.loops, self.showMetrics, self.datasetArchitecture.architecture, self.showPreview, self.logOnImage), configurationFile, indent = 4)
+                json.dump(self.configurationUtilToMap(self.limitPredictions, self.infinity, self.loops, self.showMetrics, self.fps, self.datasetArchitecture.architecture, self.showPreview, self.logOnImage), configurationFile, indent = 4)
                 print("\nSuccessfully save...")
                 
     def checkIfUpdateConfigurations(self):        
@@ -63,6 +66,7 @@ class ConfigurationUtil:
         self.infinity = map['infinity']
         self.loops = map['loops']
         self.showMetrics = map['showMetrics']
+        self.fps = map['fps']
         self.datasetArchitecture = DatasetArchitectureUtil(map['datasetArchitecture'])
         self.showPreview = map['showPreview']
         self.logOnImage = map['logOnImage']
@@ -98,10 +102,11 @@ class ConfigurationUtil:
                 self.infinity = True
                 self.loops = 1
                 self.showMetrics = False
+                self.fps = 6
                 self.datasetArchitecture = DatasetArchitectureUtil('dronet')
                 self.showPreview = False
                 self.logOnImage = True
-                json.dump(self.configurationUtilToMap(self.limitPredictions, self.infinity, self.loops, self.showMetrics, self.datasetArchitecture.architecture, self.showPreview, self.logOnImage), configurationFile, indent = 4)
+                json.dump(self.configurationUtilToMap(self.limitPredictions, self.infinity, self.loops, self.showMetrics, self.fps, self.datasetArchitecture.architecture, self.showPreview, self.logOnImage), configurationFile, indent = 4)
             return configurationFile
         with open("configurations.json", 'r+') as configurationFile:
             self.__updateConfigurationValues(json.load(configurationFile))

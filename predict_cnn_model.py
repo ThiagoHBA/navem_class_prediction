@@ -13,7 +13,7 @@ def main():
     modelX = FileModel(architectureDetails['path'][0], architectureDetails['model_struct'], architectureDetails['weight_file']).compileModel()
     modelY = FileModel(architectureDetails['path'][1], architectureDetails['model_struct'], architectureDetails['weight_file']).compileModel()
     
-    ClassificationUtil(modelX, modelY, configurations.limitPredictions, configurations.datasetArchitecture, cam, configurations.infinity, configurations.showMetrics, configurations.loops, configurations.showPreview, logOnImage = configurations.logOnImage).realTimeLoopProcess()
+    ClassificationUtil(modelX, modelY, configurations.limitPredictions, configurations.datasetArchitecture, cam, configurations.infinity, configurations.showMetrics, configurations.loops, configurations.showPreview, framerate = configurations.fps, logOnImage = configurations.logOnImage).realTimeLoopProcess()
        
 if __name__ == "__main__":
     main()
