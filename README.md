@@ -28,6 +28,14 @@ Após essa classificação das imagens, são utilizados sinais que serão enviad
 * PiCamera para obter as imagens em um dispositivo NAVEM.
 
 ## Iniciando
+### Instalando Dependências
+Em sua prompt de comando execute:
+* `pip install opencv-python`
+* `pip install keras`
+* `pip install tensorflow`
+
+### Executando aplicação
 * Instalar o python seguindo sua documentação oficial: https://www.python.org/downloads/
 * Clone este repositório usando `git clone`
 * Execute o arquivo `predict_cnn_model.py`
+  
