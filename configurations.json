@@ -3,7 +3,8 @@
     "infinity": true,
     "loops": 1,
     "showMetrics": false,
-    "datasetArchitecture": "resnet",
-    "showPreview": true,
+    "fps": 6,
+    "datasetArchitecture": "dronet",
+    "showPreview": false,
     "logOnImage": true
 }
