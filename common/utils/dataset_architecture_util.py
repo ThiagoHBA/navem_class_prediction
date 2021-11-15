@@ -27,6 +27,12 @@ class DatasetArchitectureUtil:
                 'model_struct': 'model_struct.json',
                 'weight_file': 'model_weights_299.h5'
             }
+        elif self.architecture == 'vgg16':
+            return {
+                'path': ('models/vgg16/exp_313_x', 'models/vgg16/exp_340_y'),
+                'model_struct': 'model_struct.json',
+                'weight_file': 'model_weights_299.h5'
+            }
         else:
             print("Architecture not found")
             
