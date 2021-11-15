@@ -8,8 +8,10 @@ cam = cv2.VideoCapture(0)
 def main():
     configurations = ConfigurationUtil()
 
-    modelX = FileModel('models/exp_349_x', 'model_struct.json', 'model_weights_299.h5').compileModel()
-    modelY = FileModel('models/exp_335_y', 'model_struct.json', 'model_weights_299.h5').compileModel()
+    architectureDetails = configurations.datasetArchitecture.getArchictecureDetails()
+    
+    modelX = FileModel(architectureDetails['path'][0], architectureDetails['model_struct'], architectureDetails['weight_file']).compileModel()
+    modelY = FileModel(architectureDetails['path'][1], architectureDetails['model_struct'], architectureDetails['weight_file']).compileModel()
     
     ClassificationUtil(modelX, modelY, configurations.limitPredictions, configurations.datasetArchitecture, cam, configurations.infinity, configurations.showMetrics, configurations.loops, configurations.showPreview, logOnImage = configurations.logOnImage).realTimeLoopProcess()
        
