@@ -39,3 +39,6 @@ Em sua prompt de comando execute:
 * Clone este repositório usando `git clone`
 * Execute o arquivo `predict_cnn_model.py`
   
+## Modelos
+Você pode baixar o modelo com os pesos no seguinte link:
+* https://drive.google.com/file/d/1g4BmsEjO6-TkEJd6kx20R7MvHi-jDR_0/view?usp=sharing
