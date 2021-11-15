@@ -9,6 +9,8 @@ class DatasetArchitectureUtil:
             return 200,200
         elif self.architecture == 'vgg16':
             return 224,224
+        elif self.architecture == 'resnet':
+            return 224,224
         else:
             print("Architecture not found")
             
@@ -16,7 +18,9 @@ class DatasetArchitectureUtil:
         if self.architecture == 'dronet':
             return cv2.COLOR_BGR2GRAY
         elif self.architecture == 'vgg16':
-            return cv2.COLOR_BAYER_BG2BGR
+            return cv2.COLOR_RGB2BGR
+        elif self.architecture == 'resnet':
+            return cv2.COLOR_RGB2BGR
         else:
             print("Architecture not found")
 
@@ -31,7 +35,13 @@ class DatasetArchitectureUtil:
             return {
                 'path': ('models/vgg16/exp_313_x', 'models/vgg16/exp_340_y'),
                 'model_struct': 'model_struct.json',
-                'weight_file': 'model_weights_299.h5'
+                'weight_file': 'model_weights_99.h5'
+            }
+        elif self.architecture == 'resnet':
+            return {
+                'path': ('models/resnet/exp_366_x', 'models/resnet/exp_320_y'),
+                'model_struct': 'model_struct.json',
+                'weight_file': 'model_weights_99.h5'
             }
         else:
             print("Architecture not found")
