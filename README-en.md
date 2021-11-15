@@ -40,7 +40,3 @@ At your command prompt run:
 * Install python following its official document: https://www.python.org/downloads/
 * Clone this repository using `git clone`
 * Run the `predict_cnn_model.py` file
-  
-## Models
-You can download the model with the weights from the following link:
-* https://drive.google.com/file/d/1g4BmsEjO6-TkEJd6kx20R7MvHi-jDR_0/view?usp=sharing
