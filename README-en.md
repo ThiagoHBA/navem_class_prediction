@@ -29,7 +29,7 @@ After this classification of images, signals are used that will be sent to the v
 * OpenCV to get the images and resize to a specific CNN architecture.
 * PiCamera to get the images in a NAVEM device.
 
-## Get Started
+## Getting Started
 ### Installing Dependencies
 At your command prompt run:
 * `pip install opencv-python`
