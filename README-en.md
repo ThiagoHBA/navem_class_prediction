@@ -29,7 +29,18 @@ After this classification of images, signals are used that will be sent to the v
 * OpenCV to get the images and resize to a specific CNN architecture.
 * PiCamera to get the images in a NAVEM device.
 
-## Getting Started
-* Install Python following the official documentation: https://www.python.org/downloads/
+## Get Started
+### Installing Dependencies
+At your command prompt run:
+* `pip install opencv-python`
+* `pip install keras`
+* `pip install tensorflow`
+
+### Running Application
+* Install python following its official document: https://www.python.org/downloads/
 * Clone this repository using `git clone`
-* Execute the file `predict_cnn_model.py`
+* Run the `predict_cnn_model.py` file
+  
+## Models
+You can download the model with the weights from the following link:
+* https://drive.google.com/file/d/1g4BmsEjO6-TkEJd6kx20R7MvHi-jDR_0/view?usp=sharing
