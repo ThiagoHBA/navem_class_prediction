@@ -5,6 +5,10 @@ from time import sleep
 import common.utils.classification_util as classificationModule
 import numpy as np
 import cv2
+import importlib
+
+spam_loader = importlib.find_loader('picamera')
+found = spam_loader is not None
 
 class ImageUtil:
     @staticmethod
@@ -17,21 +21,9 @@ class ImageUtil:
 
     @staticmethod
     def captureImage(cam, metrics = False, showPreview = False, framerate = 10):
-        timeStart = datetime.now()
-
-        camImage = cam.read()
-        if(showPreview):
-            ImageUtil.__showImage(camImage[1], 60)
-
-        loadImageTime = (datetime.now() - timeStart).microseconds / 1000000
-        ImageUtil.__waitFrameTime(framerate, loadImageTime)
-
-        timeEnd = datetime.now()
-
-        if(metrics):
-            classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Capture Image")
-
-        return camImage[1]
+        if(found):
+            return ImageUtil.__callPicameraCapture(metrics, showPreview, framerate)
+        return ImageUtil.__callOpenCVCapture(cam, metrics, showPreview, framerate)
 
     @staticmethod
     def resizeImage(image, imageSize, colorScale):
@@ -66,6 +58,26 @@ class ImageUtil:
         if(metrics):
             classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Open Image")
         return resizedImage
+
+    def __callPicameraCapture(metrics = False, showPreview = False, framerate = 10):
+        print("PICAMERA FOUND")
+        pass
+    def __callOpenCVCapture(cam, metrics = False, showPreview = False, framerate = 10):
+        timeStart = datetime.now()
+
+        camImage = cam.read()
+        if(showPreview):
+            ImageUtil.__showImage(camImage[1], 60)
+
+        loadImageTime = (datetime.now() - timeStart).microseconds / 1000000
+        ImageUtil.__waitFrameTime(framerate, loadImageTime)
+
+        timeEnd = datetime.now()
+
+        if(metrics):
+            classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Capture Image")
+
+        return camImage[1]
 
     def __waitFrameTime(framerate, imageCaptureTime):
         total = (1/framerate) - imageCaptureTime
