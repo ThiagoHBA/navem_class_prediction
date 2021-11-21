@@ -12,7 +12,7 @@ found = False
 spam_loader = importlib.util.find_spec('picamera')
 
 if spam_loader is not None:
-    from picamera import PiCamera
+    from picamera import PiCamera #type: ignore
     found = True
 
 class ImageUtil:
