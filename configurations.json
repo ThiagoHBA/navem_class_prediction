@@ -1,10 +1,10 @@
 {
-    "limitPredictions": 3,
+    "limitPredictions": 1,
     "infinity": true,
     "loops": 1,
     "showMetrics": false,
     "fps": 6,
     "datasetArchitecture": "dronet",
-    "showPreview": false,
+    "showPreview": true,
     "logOnImage": true
 }

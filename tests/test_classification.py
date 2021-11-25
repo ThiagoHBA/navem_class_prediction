@@ -4,7 +4,7 @@ from common.utils.classification_util import ClassificationUtil
 
 class ClassificationTest(unittest.TestCase):
     def setUp(self) -> None:
-        self.classificationObject = ClassificationUtil(None, None, None, None, experimentName = 'test')
+        self.classificationObject = ClassificationUtil(None, None, None, experimentName = 'test')
         return super().setUp()
 
     def test_ClassVote(self):

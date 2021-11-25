@@ -4,16 +4,30 @@ from common.utils.classification_util import ClassificationUtil
 import cv2
 
 cam = cv2.VideoCapture(0)
+configurations = ConfigurationUtil()
 
 def main():
-    configurations = ConfigurationUtil()
-
     architectureDetails = configurations.datasetArchitecture.getArchictecureDetails()
-    
-    modelX = FileModel(architectureDetails['path'][0], architectureDetails['model_struct'], architectureDetails['weight_file']).compileModel()
-    modelY = FileModel(architectureDetails['path'][1], architectureDetails['model_struct'], architectureDetails['weight_file']).compileModel()
-    
-    ClassificationUtil(modelX, modelY, configurations.limitPredictions, configurations.datasetArchitecture, cam, configurations.infinity, configurations.showMetrics, configurations.loops, configurations.showPreview, framerate = configurations.fps, logOnImage = configurations.logOnImage).realTimeLoopProcess()
-       
+
+    modelX = FileModel(
+        path = architectureDetails['path'][0], 
+        modelName = architectureDetails['model_struct'],
+        weightFile = architectureDetails['weight_file']
+    ).compileModel()
+
+    modelY = FileModel(
+        path = architectureDetails['path'][1], 
+        modelName = architectureDetails['model_struct'],
+        weightFile = architectureDetails['weight_file']
+    ).compileModel()
+
+    ClassificationUtil(
+        kerasModelX = modelX, 
+        kerasModelY = modelY, 
+        cam = cam,
+        configurations = configurations,
+    ).realTimeLoopProcess()
+
+
 if __name__ == "__main__":
     main()
