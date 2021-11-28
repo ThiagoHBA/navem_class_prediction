@@ -1,24 +1,15 @@
 from datetime import datetime
-import json
-from keras.preprocessing import image
 from common.utils.files_util import Files
 from common.utils.image_util import ImageUtil
 import numpy as np
 import common.enum.classification_enum as classificationEnum
 import os
 class ClassificationUtil:
-    def __init__(self, kerasModelX, kerasModelY, limit, datasetArchitecture, cam=None, infinity=False, metrics=False, loops=1, showPreview = False , experimentName = None, logOnImage = True, framerate = 6):
+    def __init__(self, kerasModelX, kerasModelY, configurations, experimentName = None, cam=None):
         self.cam = cam
-        self.limit = limit
-        self.datasetArchitecture = datasetArchitecture
         self.kerasModelX = kerasModelX
         self.kerasModelY = kerasModelY
-        self.infinity = infinity
-        self.metrics = metrics
-        self.loops = loops
-        self.showPreview = showPreview
-        self.logOnImage = logOnImage
-        self.framerate = framerate
+        self.configurations = configurations
         self.experimentName = experimentName if experimentName != None else str(input("Enter the experiment name: "))
         self.logs = self.__generateLogFile()
 
@@ -28,14 +19,14 @@ class ClassificationUtil:
         classPredictions = []
         self.experimentName = Files().createExperimentFile(self.experimentName)
 
-        while index < self.loops:
+        while index < self.configurations.loops:
             timeStart = datetime.now()
             print("\nReal Time Classification")
 
-            while len(classPredictions) < self.limit:
+            while len(classPredictions) < self.configurations.limitPredictions:
                 if(self.cam != None):
-                    capturedImage = ImageUtil.captureImage(self.cam, self.metrics, self.showPreview, self.framerate)
-                    resizedImage = ImageUtil.resizeImage(capturedImage, self.datasetArchitecture.getImageSize(),  self.datasetArchitecture.getImageColorScale())
+                    capturedImage = ImageUtil.captureImage(self.cam, self.configurations.showMetrics, self.configurations.showPreview, self.configurations.fps)
+                    resizedImage = ImageUtil.resizeImage(capturedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
                      
                     classX = ImageUtil.predictImage(resizedImage, self.kerasModelX)
                     classY = ImageUtil.predictImage(resizedImage, self.kerasModelY)
@@ -47,7 +38,7 @@ class ClassificationUtil:
             imageResult = self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions))
             self.logs.writeLog(imageResult)
 
-            if self.logOnImage:
+            if self.configurations.logOnImage:
                 linearText = imageResult['data']['linear']
                 sidesText = imageResult['data']['sides']
                 capturedImage = ImageUtil.writeTextInImage(capturedImage, (10 , 150), linearText, fontColor = (15, 150, 0)) #BGR
@@ -58,23 +49,23 @@ class ClassificationUtil:
             classPredictions.pop(0)
 
             timeEnd = datetime.now()
-            if(self.metrics):
+            if(self.configurations.showMetrics):
                 self.calculeClassificationElapsedTime(timeStart, timeEnd, "Class Result")
 
-            index = 0 if(self.infinity) else index + 1
+            index = 0 if(self.configurations.infinity) else index + 1
 
     def filePredictProcess(self, path = None, start=0):
         if(path != None):
             numberOfItens = self.__countFilesInDir(path)
             imageIndex = 0
-            for i in range(start, numberOfItens, self.limit):
+            for i in range(start, numberOfItens, self.configurations.limitPredictions):
                 print("\nFile Classification")
                 classPredictions = []
                 timeStart = datetime.now()
                 imageIndex = i
 
-                for j in range(self.limit):
-                    resizedImage = ImageUtil.openAndResizedImage(self.path + str(i + j) + '.jpg', self.datasetArchitecture.getImageSize(), self.datasetArchitecture.getImageColorScale(), self.metrics, self.showPreview)
+                for j in range(self.configurations.limitPredictions):
+                    resizedImage = ImageUtil.openAndResizedImage(self.path + str(i + j) + '.jpg', self.configurations.datasetArchitecture.getImageSize(), self.configurations.datasetArchitecture.getImageColorScale(), self.configurations.showMetrics, self.configurations.showPreview)
                     classX = ImageUtil.predictImage(resizedImage, self.kerasModelX)
                     classY = ImageUtil.predictImage(resizedImage, self.kerasModelY)
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
@@ -82,7 +73,7 @@ class ClassificationUtil:
                 self.logs.writeLog(self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions)))
                 
                 timeEnd = datetime.now()
-                if(self.metrics):
+                if(self.configurations.showMetrics):
                     self.calculeClassificationElapsedTime(timeStart, timeEnd, "File Predict Process ")
 
     @staticmethod
