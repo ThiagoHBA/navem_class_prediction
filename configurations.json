@@ -1,5 +1,5 @@
 {
-    "tensorflowLite": false,
+    "tensorflowLite": true,
     "infinity": true,
     "showMetrics": false,
     "showPreview": true,
