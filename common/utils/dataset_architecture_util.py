@@ -27,7 +27,7 @@ class DatasetArchitectureUtil:
     def getArchictecureDetails(self):
         if self.architecture == 'dronet':
             return {
-                'path': ('models/dronet/exp_349_x', 'models/dronet/exp_335_y'),
+                'path': ('models/dronet/tensorflow/exp_349_x', 'models/dronet/tensorflow/exp_335_y'),
                 'model_struct': 'model_struct.json',
                 'weight_file': 'model_weights_299.h5'
             }
