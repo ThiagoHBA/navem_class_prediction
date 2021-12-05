@@ -36,6 +36,15 @@ class DatasetArchitectureUtil:
                 'model_struct': 'model_struct.json',
                 'weight_file': 'model_weights_299.h5'
             }
+        elif self.architecture == 'resnet':
+            return {
+                'path': (
+                    modelPath + '/resnet/' + tensorflowPath + ('/exp_366_x' if not useTensorflowLite else '/resnet_model_x.tflite'), 
+                    modelPath + '/resnet/' + tensorflowPath + ('/exp_320_y'  if not useTensorflowLite else '/resnet_model_y.tflite')
+                ),
+                'model_struct': 'model_struct.json',
+                'weight_file': 'model_weights_99.h5'
+            }
         else:
             print("Architecture not found")
             
