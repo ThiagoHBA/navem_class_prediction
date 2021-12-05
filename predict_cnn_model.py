@@ -6,26 +6,43 @@ import cv2
 cam = cv2.VideoCapture(0)
 configurations = ConfigurationUtil()
 
+
 def main():
-    architectureDetails = configurations.datasetArchitecture.getArchictecureDetails()
+    architectureDetails = configurations.datasetArchitecture.getArchictecureDetails(
+        useTensorflowLite=configurations.tensorflowLite
+    )
 
-    modelX = FileModel(
-        path = architectureDetails['path'][0], 
-        modelName = architectureDetails['model_struct'],
-        weightFile = architectureDetails['weight_file']
-    ).compileModel()
+    if not configurations.tensorflowLite:
+        modelX = FileModel(
+            path=architectureDetails['path'][0],
+            modelName=architectureDetails['model_struct'],
+            weightFile=architectureDetails['weight_file']
+        ).compileTensorflowModel()
 
-    modelY = FileModel(
-        path = architectureDetails['path'][1], 
-        modelName = architectureDetails['model_struct'],
-        weightFile = architectureDetails['weight_file']
-    ).compileModel()
+        modelY = FileModel(
+            path=architectureDetails['path'][1],
+            modelName=architectureDetails['model_struct'],
+            weightFile=architectureDetails['weight_file']
+        ).compileTensorflowModel()
+    else:
+        modelX = FileModel(
+            path=architectureDetails['path'][0],
+            modelName=architectureDetails['model_struct'],
+            weightFile=architectureDetails['weight_file'],
+        ).compileTensorflowLiteModel()
+
+        modelY = FileModel(
+            path=architectureDetails['path'][1],
+            modelName=architectureDetails['model_struct'],
+            weightFile=architectureDetails['weight_file']
+        ).compileTensorflowLiteModel()
+
 
     ClassificationUtil(
-        kerasModelX = modelX, 
-        kerasModelY = modelY, 
-        cam = cam,
-        configurations = configurations,
+        kerasModelX=modelX,
+        kerasModelY=modelY,
+        cam=cam,
+        configurations=configurations,
     ).realTimeLoopProcess()
 
 

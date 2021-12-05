@@ -17,7 +17,7 @@ class FileModel:
         weightFile = Files.findFile(self.weightFile, self.path)
         return weightFile
 
-    def compileModel(self):
+    def compileTensorflowModel(self):
         print("Compiling Model...")
         print("="*15)
         try:
@@ -29,5 +29,10 @@ class FileModel:
         except:
             print('Impossible to load model, check the file paths')
             sys.exit()
+
+    def compileTensorflowLiteModel(self):
+        print("Compiling Model...")
+        print("="*15)
+        sys.exit()
             
     
