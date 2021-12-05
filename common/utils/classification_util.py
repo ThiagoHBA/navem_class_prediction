@@ -14,10 +14,49 @@ class ClassificationUtil:
         self.logs = self.__generateLogFile()
 
     def realTimeLoopProcess(self):
-        if self.configurations.tensorflowLite:
-            self.__realTimeTensorflowLiteProcess()
-        else:
-            self.__realTimeTensorflowProcess()
+        index = 0
+        imageIndex = 0
+        classPredictions = []
+        self.experimentName = Files().createExperimentFile(self.experimentName)
+
+        while index < self.configurations.loops:
+            timeStart = datetime.now()
+            print("\nReal Time Classification")
+
+            while len(classPredictions) < self.configurations.limitPredictions:
+                if(self.cam != None):
+                    capturedImage = ImageUtil.captureImage(self.cam, self.configurations.showMetrics, self.configurations.showPreview, self.configurations.fps)
+                    resizedImage = ImageUtil.resizeImage(capturedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
+                    
+                    if(self.configurations.tensorflowLite):
+                        classX = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelX)
+                        classY = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelY)
+                    else:
+                        classX = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelX)
+                        classY = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelY)
+                    
+                    classPredictions.append((np.argmax(classX), np.argmax(classY)))
+
+                    imageIndex += 1
+            
+            imageResult = self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions))
+            self.logs.writeLog(imageResult)
+
+            if self.configurations.logOnImage:
+                linearText = imageResult['data']['linear']
+                sidesText = imageResult['data']['sides']
+                capturedImage = ImageUtil.writeTextInImage(capturedImage, (10 , 150), linearText, fontColor = (15, 150, 0)) #BGR
+                capturedImage = ImageUtil.writeTextInImage(capturedImage, (10 , 200), sidesText, fontColor = (0, 0, 255))
+
+            ImageUtil.saveImage(capturedImage, str(imageIndex).zfill(5), self.experimentName)
+
+            classPredictions.pop(0)
+
+            timeEnd = datetime.now()
+            if(self.configurations.showMetrics):
+                self.calculeClassificationElapsedTime(timeStart, timeEnd, "Class Result")
+
+            index = 0 if(self.configurations.infinity) else index + 1
 
     def filePredictProcess(self, path = None, start=0):
         if(path != None):
@@ -31,8 +70,8 @@ class ClassificationUtil:
 
                 for j in range(self.configurations.limitPredictions):
                     resizedImage = ImageUtil.openAndResizedImage(self.path + str(i + j) + '.jpg', self.configurations.datasetArchitecture.getImageSize(), self.configurations.datasetArchitecture.getImageColorScale(), self.configurations.showMetrics, self.configurations.showPreview)
-                    classX = ImageUtil.predictImage(resizedImage, self.tensorflowModelX)
-                    classY = ImageUtil.predictImage(resizedImage, self.tensorflowModelY)
+                    classX = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelX)
+                    classY = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelY)
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
 
                 self.logs.writeLog(self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions)))
@@ -81,50 +120,6 @@ class ClassificationUtil:
         else:
             return self.__handleClassificationValue("Lateral: ", classificationEnum.SidesClassificationClass, self.classVote(value, 'y'))
 
-    def __realTimeTensorflowLiteProcess(self):
-        pass
-
-    def __realTimeTensorflowProcess(self):
-        index = 0
-        imageIndex = 0
-        classPredictions = []
-        self.experimentName = Files().createExperimentFile(self.experimentName)
-
-        while index < self.configurations.loops:
-            timeStart = datetime.now()
-            print("\nReal Time Classification")
-
-            while len(classPredictions) < self.configurations.limitPredictions:
-                if(self.cam != None):
-                    capturedImage = ImageUtil.captureImage(self.cam, self.configurations.showMetrics, self.configurations.showPreview, self.configurations.fps)
-                    resizedImage = ImageUtil.resizeImage(capturedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
-                     
-                    classX = ImageUtil.predictImage(resizedImage, self.tensorflowModelX)
-                    classY = ImageUtil.predictImage(resizedImage, self.tensorflowModelY)
-                    
-                    classPredictions.append((np.argmax(classX), np.argmax(classY)))
-
-                    imageIndex += 1
-            
-            imageResult = self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions))
-            self.logs.writeLog(imageResult)
-
-            if self.configurations.logOnImage:
-                linearText = imageResult['data']['linear']
-                sidesText = imageResult['data']['sides']
-                capturedImage = ImageUtil.writeTextInImage(capturedImage, (10 , 150), linearText, fontColor = (15, 150, 0)) #BGR
-                capturedImage = ImageUtil.writeTextInImage(capturedImage, (10 , 200), sidesText, fontColor = (0, 0, 255))
-
-            ImageUtil.saveImage(capturedImage, str(imageIndex).zfill(5), self.experimentName)
-
-            classPredictions.pop(0)
-
-            timeEnd = datetime.now()
-            if(self.configurations.showMetrics):
-                self.calculeClassificationElapsedTime(timeStart, timeEnd, "Class Result")
-
-            index = 0 if(self.configurations.infinity) else index + 1
-    
     def __generateLogFile(self):
         logs = Files(self.experimentName) if self.experimentName != None else Files()
         logs.initializeLog()

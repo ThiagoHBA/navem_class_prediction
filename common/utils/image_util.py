@@ -17,12 +17,22 @@ if spam_loader is not None:
 
 class ImageUtil:
     @staticmethod
-    def predictImage(image, kerasModel):       
+    def predictImageTensorflow(image, tensorflowModel):       
         np.set_printoptions(suppress=True)
         image = np.vstack([image])
-        result = kerasModel.predict(image, batch_size=64)
+        result = tensorflowModel.predict(image, batch_size=64)
         
         return result
+
+    @staticmethod
+    def predictImageTensorflowLite(image, tensorflowLiteModel):       
+        inputDetails = tensorflowLiteModel.get_input_details()    
+        outputDetails = tensorflowLiteModel.get_output_details()
+
+        tensorflowLiteModel.set_tensor(inputDetails[0]['index'], image)
+        tensorflowLiteModel.invoke()
+
+        return tensorflowLiteModel.get_tensor(outputDetails[0]['index'])
 
     @staticmethod
     def captureImage(cam, metrics = False, showPreview = False, framerate = 10):
