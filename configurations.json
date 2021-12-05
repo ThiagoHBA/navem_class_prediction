@@ -1,10 +1,11 @@
 {
-    "limitPredictions": 1,
+    "tensorflowLite": false,
     "infinity": true,
-    "loops": 1,
     "showMetrics": false,
-    "fps": 6,
-    "datasetArchitecture": "dronet",
     "showPreview": true,
-    "logOnImage": true
+    "logOnImage": true,
+    "limitPredictions": 1,
+    "loops": 1,
+    "fps": 6,
+    "datasetArchitecture": "dronet"
 }
