@@ -1,5 +1,5 @@
 from .files_util import Files
-from keras.models import load_model
+import tensorflow as tf
 from keras.models import model_from_json
 import sys
 
@@ -18,7 +18,7 @@ class FileModel:
         return weightFile
 
     def compileTensorflowModel(self):
-        print("Compiling Model...")
+        print("Compiling Tensorflow Model...")
         print("="*15)
         try:
             _model = model_from_json(self.__jsonModel())
@@ -31,8 +31,11 @@ class FileModel:
             sys.exit()
 
     def compileTensorflowLiteModel(self):
-        print("Compiling Model...")
+        print("Compiling Tensorflow Lite Model...")
         print("="*15)
-        sys.exit()
+        interpreter = tf.lite.Interpreter(model_path = self.path)
+        interpreter.allocate_tensors()
+
+        return interpreter
             
     
