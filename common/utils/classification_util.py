@@ -5,10 +5,10 @@ import numpy as np
 import common.enum.classification_enum as classificationEnum
 import os
 class ClassificationUtil:
-    def __init__(self, kerasModelX, kerasModelY, configurations, experimentName = None, cam=None):
+    def __init__(self, tensorflowModelX, tensorflowModelY, configurations, experimentName = None, cam=None):
         self.cam = cam
-        self.kerasModelX = kerasModelX
-        self.kerasModelY = kerasModelY
+        self.tensorflowModelX = tensorflowModelX
+        self.tensorflowModelY = tensorflowModelY
         self.configurations = configurations
         self.experimentName = experimentName if experimentName != None else str(input("Enter the experiment name: "))
         self.logs = self.__generateLogFile()
@@ -27,9 +27,13 @@ class ClassificationUtil:
                 if(self.cam != None):
                     capturedImage = ImageUtil.captureImage(self.cam, self.configurations.showMetrics, self.configurations.showPreview, self.configurations.fps)
                     resizedImage = ImageUtil.resizeImage(capturedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
-                     
-                    classX = ImageUtil.predictImage(resizedImage, self.kerasModelX)
-                    classY = ImageUtil.predictImage(resizedImage, self.kerasModelY)
+                    
+                    if(self.configurations.tensorflowLite):
+                        classX = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelX)
+                        classY = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelY)
+                    else:
+                        classX = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelX)
+                        classY = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelY)
                     
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
 
@@ -66,8 +70,8 @@ class ClassificationUtil:
 
                 for j in range(self.configurations.limitPredictions):
                     resizedImage = ImageUtil.openAndResizedImage(self.path + str(i + j) + '.jpg', self.configurations.datasetArchitecture.getImageSize(), self.configurations.datasetArchitecture.getImageColorScale(), self.configurations.showMetrics, self.configurations.showPreview)
-                    classX = ImageUtil.predictImage(resizedImage, self.kerasModelX)
-                    classY = ImageUtil.predictImage(resizedImage, self.kerasModelY)
+                    classX = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelX)
+                    classY = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelY)
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
 
                 self.logs.writeLog(self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions)))
