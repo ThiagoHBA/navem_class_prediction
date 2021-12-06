@@ -7,5 +7,5 @@
     "limitPredictions": 1,
     "loops": 1,
     "fps": 6,
-    "datasetArchitecture": "dronet"
+    "datasetArchitecture": "resnet"
 }
