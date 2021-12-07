@@ -24,24 +24,17 @@ class DatasetArchitectureUtil:
         else:
             print("Architecture not found")
 
-    def getArchictecureDetails(self):
+    def getArchictecureDetails(self, useTensorflowLite = False):
+        modelPath = 'models'
+        tensorflowPath = 'tensorflow' if not useTensorflowLite else 'tensorflow_lite'
         if self.architecture == 'dronet':
             return {
-                'path': ('models/dronet/exp_349_x', 'models/dronet/exp_335_y'),
+                'path': (
+                    modelPath + '/dronet/' + tensorflowPath + ('/exp_349_x' if not useTensorflowLite else '/dronet_model_x.tflite'), 
+                    modelPath + '/dronet/' + tensorflowPath + ('/exp_335_y'  if not useTensorflowLite else '/dronet_model_y.tflite')
+                ),
                 'model_struct': 'model_struct.json',
                 'weight_file': 'model_weights_299.h5'
-            }
-        elif self.architecture == 'vgg16':
-            return {
-                'path': ('models/vgg16/exp_313_x', 'models/vgg16/exp_340_y'),
-                'model_struct': 'model_struct.json',
-                'weight_file': 'model_weights_99.h5'
-            }
-        elif self.architecture == 'resnet':
-            return {
-                'path': ('models/resnet/exp_366_x', 'models/resnet/exp_320_y'),
-                'model_struct': 'model_struct.json',
-                'weight_file': 'model_weights_99.h5'
             }
         else:
             print("Architecture not found")
