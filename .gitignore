@@ -134,3 +134,4 @@ experiments/
 
 #Tensorflow models who are heavy
 models/resnet/tensorflow
+models/vgg16/
