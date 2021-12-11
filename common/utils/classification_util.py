@@ -21,7 +21,7 @@ class ClassificationUtil:
 
         while index < self.configurations.loops:
             timeStart = datetime.now()
-            print("\nReal Time Classification")
+            print("\nReal Time Classification {}".format(self.configurations.datasetArchitecture.architecture))
 
             while len(classPredictions) < self.configurations.limitPredictions:
                 if(self.cam != None):

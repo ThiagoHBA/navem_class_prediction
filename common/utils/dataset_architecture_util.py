@@ -45,6 +45,15 @@ class DatasetArchitectureUtil:
                 'model_struct': 'model_struct.json',
                 'weight_file': 'model_weights_99.h5'
             }
+        elif self.architecture == 'vgg16':
+            return {
+                'path': (
+                    modelPath + '/vgg16/' + tensorflowPath + ('/exp_340_x' if not useTensorflowLite else '/vgg16_model_x.tflite'), 
+                    modelPath + '/vgg16/' + tensorflowPath + ('/exp_313_y'  if not useTensorflowLite else '/vgg16_model_y.tflite')
+                ),
+                'model_struct': 'model_struct.json',
+                'weight_file': 'model_weights_99.h5'
+            }
         else:
             print("Architecture not found")
             
