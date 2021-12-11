@@ -21,13 +21,17 @@ class ClassificationUtil:
 
         while index < self.configurations.loops:
             timeStart = datetime.now()
-            print("\nReal Time Classification {}".format(self.configurations.datasetArchitecture.architecture))
+            print("\n" + "=" * 15 + "\tReal Time Classification {}\t".format(self.configurations.datasetArchitecture.architecture) + "=" * 15)
 
             while len(classPredictions) < self.configurations.limitPredictions:
                 if(self.cam != None):
-                    capturedImage = ImageUtil.captureImage(self.cam, self.configurations.showMetrics, self.configurations.showPreview, self.configurations.fps)
+                    startProcessImageTime = datetime.now()
+
+                    capturedImage = ImageUtil.captureImage(self.cam, self.configurations.showPreview, self.configurations.fps)
                     resizedImage = ImageUtil.resizeImage(capturedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
-                    
+
+                    finishProcessImageTime = datetime.now()
+
                     if(self.configurations.tensorflowLite):
                         classX = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelX)
                         classY = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelY)
@@ -54,6 +58,8 @@ class ClassificationUtil:
 
             timeEnd = datetime.now()
             if(self.configurations.showMetrics):
+                print("\n" + "-" * 15 + "\tMetrics\t" + "-" * 15)
+                self.calculeClassificationElapsedTime(startProcessImageTime, finishProcessImageTime, "Process Image")
                 self.calculeClassificationElapsedTime(timeStart, timeEnd, "Class Result")
 
             index = 0 if(self.configurations.infinity) else index + 1
@@ -82,10 +88,9 @@ class ClassificationUtil:
 
     @staticmethod
     def calculeClassificationElapsedTime(timeStart, timeEnd, label=''):
+        print("\n" + "=" * 15)
+        print(label + "ElapsedTime in ms: {}".format((timeEnd - timeStart).microseconds / 1000))
         print("=" * 15)
-        print(label + "ElapsedTime in ms: {}".format((timeEnd -
-              timeStart).microseconds / 1000))
-        print("=" * 15 + "\n")
 
     @staticmethod
     def classificationToMap(index, linearValue, sidesValue):
