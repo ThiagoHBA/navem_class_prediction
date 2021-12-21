@@ -131,3 +131,7 @@ dmypy.json
 #Logs and experiments
 logs/
 experiments/
+
+#Tensorflow models who are heavy
+models/resnet/tensorflow
+models/vgg16/

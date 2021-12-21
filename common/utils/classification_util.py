@@ -20,23 +20,26 @@ class ClassificationUtil:
         self.experimentName = Files().createExperimentFile(self.experimentName)
 
         while index < self.configurations.loops:
-            timeStart = datetime.now()
-            print("\nReal Time Classification")
+            print("\n" + "=" * 15 + "\tReal Time Classification {}\t".format(self.configurations.datasetArchitecture.architecture) + "=" * 15)
+            startPredictionTime = datetime.now()
 
             while len(classPredictions) < self.configurations.limitPredictions:
                 if(self.cam != None):
-                    capturedImage = ImageUtil.captureImage(self.cam, self.configurations.showMetrics, self.configurations.showPreview, self.configurations.fps)
+                    startProcessImageTime = datetime.now()
+
+                    capturedImage = ImageUtil.captureImage(self.cam, self.configurations.showPreview, self.configurations.fps)
                     resizedImage = ImageUtil.resizeImage(capturedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
-                    
+
+                    finishProcessImageTime = datetime.now()
+
                     if(self.configurations.tensorflowLite):
                         classX = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelX)
                         classY = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelY)
                     else:
                         classX = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelX)
                         classY = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelY)
-                    
+                
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
-
                     imageIndex += 1
             
             imageResult = self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions))
@@ -49,12 +52,13 @@ class ClassificationUtil:
                 capturedImage = ImageUtil.writeTextInImage(capturedImage, (10 , 200), sidesText, fontColor = (0, 0, 255))
 
             ImageUtil.saveImage(capturedImage, str(imageIndex).zfill(5), self.experimentName)
-
             classPredictions.pop(0)
+            finishPredictionTime = datetime.now()
 
-            timeEnd = datetime.now()
             if(self.configurations.showMetrics):
-                self.calculeClassificationElapsedTime(timeStart, timeEnd, "Class Result")
+                print("\n" + "-" * 15 + "\tMetrics\t" + "-" * 15)
+                self.calculeClassificationElapsedTime(startProcessImageTime, finishProcessImageTime, "Process Image")
+                self.calculeClassificationElapsedTime(startPredictionTime, finishPredictionTime, "Class Result")
 
             index = 0 if(self.configurations.infinity) else index + 1
 
@@ -82,10 +86,9 @@ class ClassificationUtil:
 
     @staticmethod
     def calculeClassificationElapsedTime(timeStart, timeEnd, label=''):
+        print("\n" + "=" * 15)
+        print(label + "ElapsedTime in seconds: ", (timeEnd - timeStart).total_seconds())
         print("=" * 15)
-        print(label + "ElapsedTime in ms: {}".format((timeEnd -
-              timeStart).microseconds / 1000))
-        print("=" * 15 + "\n")
 
     @staticmethod
     def classificationToMap(index, linearValue, sidesValue):
