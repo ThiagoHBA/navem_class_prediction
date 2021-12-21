@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from common.utils.files_util import Files
 from common.utils.image_util import ImageUtil
 import numpy as np
@@ -73,16 +73,31 @@ class ClassificationUtil:
                 imageIndex = i
 
                 for j in range(self.configurations.limitPredictions):
-                    resizedImage = ImageUtil.openAndResizedImage(self.path + str(i + j) + '.jpg', self.configurations.datasetArchitecture.getImageSize(), self.configurations.datasetArchitecture.getImageColorScale(), self.configurations.showMetrics, self.configurations.showPreview)
-                    classX = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelX)
-                    classY = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelY)
+                    openedImageTimeStart = datetime.now()
+                    
+                    openedImage = ImageUtil.openImage(path + str(i + j) + '.jpg', self.configurations.showPreview)
+                    resizedImage = ImageUtil.resizeImage(openedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
+                    
+                    openedImageTimeFinish = datetime.now()
+
+                    if(self.configurations.tensorflowLite):
+                        classX = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelX)
+                        classY = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelY)
+                    else:
+                        classX = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelX)
+                        classY = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelY)
+                    
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
 
                 self.logs.writeLog(self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions)))
                 
                 timeEnd = datetime.now()
+
                 if(self.configurations.showMetrics):
+                    print("\n" + "-" * 15 + "\tMetrics\t" + "-" * 15)
+                    self.calculeClassificationElapsedTime(openedImageTimeStart, openedImageTimeFinish, "Opened Image")
                     self.calculeClassificationElapsedTime(timeStart, timeEnd, "File Predict Process ")
+
 
     @staticmethod
     def calculeClassificationElapsedTime(timeStart, timeEnd, label=''):

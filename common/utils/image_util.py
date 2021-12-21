@@ -62,16 +62,11 @@ class ImageUtil:
         return image
 
     @staticmethod
-    def openAndResizedImage(path, imageSize, colorScale, metrics = False, showPreview = False):
-        timeStart = datetime.now()
+    def openImage(path, showPreview = False):
         image = cv2.imread(path)
         if(showPreview):
-            ImageUtil.__showImage(image, 1)
-        resizedImage = ImageUtil.__resizeImage(image, imageSize, colorScale)
-        timeEnd = datetime.now()
-        if(metrics):
-            classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Open Image")
-        return resizedImage
+            ImageUtil.__showImage(image, 1)  
+        return image
 
     def __callPicameraCapture(showPreview = False, framerate = 10):
         startCaptureTime = datetime.now()
