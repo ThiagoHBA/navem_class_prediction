@@ -17,7 +17,7 @@ def main():
         tensorflowModelY = tensorflowModels[1],
         cam = cam,
         configurations = configurations,
-    ).realTimeLoopProcess()
+    ).filePredictProcess(path = 'D:/Documentos/datasets/2020_06_25-16_03_09/')
 
 
 def obtainTensorflowModels():
@@ -40,3 +40,4 @@ def obtainTensorflowModels():
 
 if __name__ == "__main__":
     main()
+4

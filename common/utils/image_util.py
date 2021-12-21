@@ -6,14 +6,13 @@ import common.utils.classification_util as classificationModule
 import numpy as np
 import cv2
 import importlib
-import sys
 
-found = False
+foundPicameraModule = False
 spam_loader = importlib.util.find_spec('picamera')
 
 if spam_loader is not None:
     from picamera import PiCamera #type: ignore
-    found = True
+    foundPicameraModule = True
 
 class ImageUtil:
     @staticmethod
@@ -35,10 +34,10 @@ class ImageUtil:
         return tensorflowLiteModel.get_tensor(outputDetails[0]['index'])
 
     @staticmethod
-    def captureImage(cam, metrics = False, showPreview = False, framerate = 10):
-        if(found):
-            return ImageUtil.__callPicameraCapture(metrics, showPreview, framerate)
-        return ImageUtil.__callOpenCVCapture(cam, metrics, showPreview, framerate)
+    def captureImage(cam, showPreview = False, framerate = 10):
+        if(foundPicameraModule):
+            return ImageUtil.__callPicameraCapture(showPreview, framerate)
+        return ImageUtil.__callOpenCVCapture(cam, showPreview, framerate) 
 
     @staticmethod
     def resizeImage(image, imageSize, colorScale):
@@ -63,20 +62,15 @@ class ImageUtil:
         return image
 
     @staticmethod
-    def openAndResizedImage(path, imageSize, colorScale, metrics = False, showPreview = False):
-        timeStart = datetime.now()
+    def openImage(path, showPreview = False):
         image = cv2.imread(path)
         if(showPreview):
-            ImageUtil.__showImage(image, 1)
-        resizedImage = ImageUtil.__resizeImage(image, imageSize, colorScale)
-        timeEnd = datetime.now()
-        if(metrics):
-            classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Open Image")
-        return resizedImage
+            ImageUtil.__showImage(image, 1)  
+        return image
 
-    def __callPicameraCapture(metrics = False, showPreview = False, framerate = 10):
-        timeStart = datetime.now()
-        
+    def __callPicameraCapture(showPreview = False, framerate = 10):
+        startCaptureTime = datetime.now()
+
         camera = PiCamera()
         camera.resolution = (640 , 480)
         camera.framerate = 10
@@ -89,32 +83,22 @@ class ImageUtil:
         if(showPreview):
             ImageUtil.__showImage(output, 60)
         
-        loadImageTime = (datetime.now() - timeStart).microseconds / 1000000
+        loadImageTime = (datetime.now() - startCaptureTime).microseconds / 1000000
         ImageUtil.__waitFrameTime(framerate, loadImageTime)
-        
-        timeEnd = datetime.now()
-        
-        if(metrics):
-            classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Capture Image")
         
         camera.close()
         
         return output
     
-    def __callOpenCVCapture(cam, metrics = False, showPreview = False, framerate = 10):
-        timeStart = datetime.now()
+    def __callOpenCVCapture(cam, showPreview = False, framerate = 10):
+        startCaptureTimer = datetime.now()
 
         camImage = cam.read()
         if(showPreview):
             ImageUtil.__showImage(camImage[1], 60)
 
-        loadImageTime = (datetime.now() - timeStart).microseconds / 1000000
+        loadImageTime = (datetime.now() - startCaptureTimer).microseconds / 1000000
         ImageUtil.__waitFrameTime(framerate, loadImageTime)
-
-        timeEnd = datetime.now()
-
-        if(metrics):
-            classificationModule.ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd, "Capture Image")
 
         return camImage[1]
 
