@@ -5,55 +5,55 @@ class DatasetArchitectureUtil:
         self.architecture = architecture
 
     def getImageSize(self):
-        if self.architecture == 'dronet':
-            return 200,200
-        elif self.architecture == 'vgg16':
-            return 224,224
-        elif self.architecture == 'resnet':
-            return 224,224
-        else:
-            print("Architecture not found")
+        imageSizeDict = {
+            'dronet': (200,200),
+            'resnet': (224,224),
+            'vgg16': (224,224),
+        }
+        architectureSize = imageSizeDict[self.architecture]
+        return architectureSize if architectureSize != None else print("Architecture not found")
             
     def getImageColorScale(self):
-        if self.architecture == 'dronet':
-            return cv2.COLOR_BGR2GRAY
-        elif self.architecture == 'vgg16':
-            return cv2.COLOR_RGB2BGR
-        elif self.architecture == 'resnet':
-            return cv2.COLOR_RGB2BGR
-        else:
-            print("Architecture not found")
+        colorScaleDict = {
+            'dronet': cv2.COLOR_BGR2GRAY,
+            'resnet': cv2.COLOR_RGB2BGR,
+            'vgg16': cv2.COLOR_RGB2BGR,
+        }
+        architectureColorScale = colorScaleDict[self.architecture]
+        return architectureColorScale if architectureColorScale != None else print("Architecture not found")
 
     def getArchictecureDetails(self, useTensorflowLite = False):
-        modelPath = 'models'
         tensorflowPath = 'tensorflow' if not useTensorflowLite else 'tensorflow_lite'
-        if self.architecture == 'dronet':
-            return {
+        
+        dronetPath = ('exp_349_x/' if not useTensorflowLite else '/dronet_model_x.tflite', 'exp_335_y/' if not useTensorflowLite else '/dronet_model_y.tflite',)
+        resnetPath = ('exp_366_x/' if not useTensorflowLite else '/resnet_model_x.tflite', 'exp_320_y/' if not useTensorflowLite else '/resnet_model_y.tflite')
+        vgg16Path = ('exp_340_x/' if not useTensorflowLite else '/vgg16_model_x.tflite', 'exp_313_y/' if not useTensorflowLite else '/vgg16_model_x.tflite')
+
+        architectureDetailsDict = {
+            'dronet': {
                 'path': (
-                    modelPath + '/dronet/' + tensorflowPath + ('/exp_349_x' if not useTensorflowLite else '/dronet_model_x.tflite'), 
-                    modelPath + '/dronet/' + tensorflowPath + ('/exp_335_y'  if not useTensorflowLite else '/dronet_model_y.tflite')
+                    f'models/dronet/{tensorflowPath}/{dronetPath[0]}',
+                    f'models/dronet/{tensorflowPath}/{dronetPath[1]}',
                 ),
                 'model_struct': 'model_struct.json',
                 'weight_file': 'model_weights_299.h5'
-            }
-        elif self.architecture == 'resnet':
-            return {
+            },
+            'resnet': {
                 'path': (
-                    modelPath + '/resnet/' + tensorflowPath + ('/exp_366_x' if not useTensorflowLite else '/resnet_model_x.tflite'), 
-                    modelPath + '/resnet/' + tensorflowPath + ('/exp_320_y'  if not useTensorflowLite else '/resnet_model_y.tflite')
+                    f'models/resnet/{tensorflowPath}/{resnetPath[0]}',
+                    f'models/resnet/{tensorflowPath}/{resnetPath[1]}',
+                ),
+                'model_struct': 'model_struct.json',
+                'weight_file': 'model_weights_99.h5'
+            },
+            'vgg16': {
+                'path': (
+                    f'models/vgg16/{tensorflowPath}/{vgg16Path[0]}',
+                    f'models/vgg16/{tensorflowPath}/{vgg16Path[1]}',
                 ),
                 'model_struct': 'model_struct.json',
                 'weight_file': 'model_weights_99.h5'
             }
-        elif self.architecture == 'vgg16':
-            return {
-                'path': (
-                    modelPath + '/vgg16/' + tensorflowPath + ('/exp_340_x' if not useTensorflowLite else '/vgg16_model_x.tflite'), 
-                    modelPath + '/vgg16/' + tensorflowPath + ('/exp_313_y'  if not useTensorflowLite else '/vgg16_model_y.tflite')
-                ),
-                'model_struct': 'model_struct.json',
-                'weight_file': 'model_weights_99.h5'
-            }
-        else:
-            print("Architecture not found")
-            
+        }
+        architectureDetails = architectureDetailsDict[self.architecture]
+        return architectureDetails if architectureDetails != None else print("Architecture not found")
