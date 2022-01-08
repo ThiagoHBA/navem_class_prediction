@@ -20,6 +20,8 @@ def main():
     ).realTimeLoopProcess()
 
 
+
+
 def obtainTensorflowModels():
     modelX = FileModel(
                 path=architectureDetails['path'][0],

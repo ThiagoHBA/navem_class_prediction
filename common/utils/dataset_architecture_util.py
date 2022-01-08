@@ -24,10 +24,10 @@ class DatasetArchitectureUtil:
 
     def getArchictecureDetails(self, useTensorflowLite = False):
         tensorflowPath = 'tensorflow' if not useTensorflowLite else 'tensorflow_lite'
-        
+
         dronetPath = ('exp_349_x/' if not useTensorflowLite else '/dronet_model_x.tflite', 'exp_335_y/' if not useTensorflowLite else '/dronet_model_y.tflite',)
         resnetPath = ('exp_366_x/' if not useTensorflowLite else '/resnet_model_x.tflite', 'exp_320_y/' if not useTensorflowLite else '/resnet_model_y.tflite')
-        vgg16Path = ('exp_340_x/' if not useTensorflowLite else '/vgg16_model_x.tflite', 'exp_313_y/' if not useTensorflowLite else '/vgg16_model_x.tflite')
+        vgg16Path = ('exp_340_x/' if not useTensorflowLite else '/vgg16_model_x.tflite', 'exp_313_y/' if not useTensorflowLite else '/vgg16_model_y.tflite')
 
         architectureDetailsDict = {
             'dronet': {
