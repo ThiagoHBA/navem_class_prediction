@@ -22,12 +22,15 @@ class DatasetArchitectureUtil:
         architectureColorScale = colorScaleDict[self.architecture]
         return architectureColorScale if architectureColorScale != None else print("Architecture not found")
 
-    def getArchictecureDetails(self, useTensorflowLite = False):
+    def getArchictecureDetails(self, useTensorflowLite = False, evaluate = False):
         tensorflowPath = 'tensorflow' if not useTensorflowLite else 'tensorflow_lite'
 
-        dronetPath = ('exp_349_x/' if not useTensorflowLite else '/dronet_model_x.tflite', 'exp_335_y/' if not useTensorflowLite else '/dronet_model_y.tflite',)
-        resnetPath = ('exp_366_x/' if not useTensorflowLite else '/resnet_model_x.tflite', 'exp_320_y/' if not useTensorflowLite else '/resnet_model_y.tflite')
-        vgg16Path = ('exp_340_x/' if not useTensorflowLite else '/vgg16_model_x.tflite', 'exp_313_y/' if not useTensorflowLite else '/vgg16_model_y.tflite')
+        dronetPath = ('dronet_x/' if not useTensorflowLite else '/dronet_model_x.tflite', 'dronet_y/' if not useTensorflowLite else '/dronet_model_y.tflite',)
+        resnetPath = ('resnet_x/' if not useTensorflowLite else '/resnet_model_x.tflite', 'resnet_y/' if not useTensorflowLite else '/resnet_model_y.tflite')
+        vgg16Path = ('vgg16_x/' if not useTensorflowLite else '/vgg16_model_x.tflite', 'vgg16_y/' if not useTensorflowLite else '/vgg16_model_y.tflite')
+
+        if(evaluate):
+            tensorflowPath = tensorflowPath + '_evaluate'
 
         architectureDetailsDict = {
             'dronet': {
