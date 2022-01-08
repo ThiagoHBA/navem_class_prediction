@@ -23,8 +23,6 @@ class ClassificationUtil:
 
         while index < self.configurations.loops:
             self.__processLog('Real Time Classification')
-            startPredictionTime = datetime.now()
-
             while len(classPredictions) < self.configurations.limitPredictions:
                 if(self.cam != None):
                     startProcessImageTime = datetime.now()
@@ -33,7 +31,7 @@ class ClassificationUtil:
                     resizedImage = ImageUtil.resizeImage(capturedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
 
                     finishProcessImageTime = datetime.now()
-
+                    
                     if(self.configurations.tensorflowLite):
                         classX = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelX)
                         classY = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelY)
@@ -55,12 +53,14 @@ class ClassificationUtil:
 
             ImageUtil.saveImage(capturedImage, str(imageIndex).zfill(5), self.experimentName)
             classPredictions.pop(0)
+
             finishPredictionTime = datetime.now()
 
             if(self.configurations.showMetrics):
                 print("\n" + "-" * 15 + "\tMetrics\t" + "-" * 15)
                 self.calculeClassificationElapsedTime(startProcessImageTime, finishProcessImageTime, "Process Image")
-                self.calculeClassificationElapsedTime(startPredictionTime, finishPredictionTime, "Class Result")
+                self.calculeClassificationElapsedTime(finishProcessImageTime, finishPredictionTime, "Predict Result")
+                self.calculeClassificationElapsedTime(startProcessImageTime, finishPredictionTime, "Total ")
 
             index = 0 if(self.configurations.infinity) else index + 1
 
@@ -71,7 +71,6 @@ class ClassificationUtil:
             for i in range(start, numberOfItens, self.configurations.limitPredictions):
                 self.__processLog('File Classification')
                 classPredictions = []
-                timeStart = datetime.now()
                 imageIndex = i
 
                 for j in range(self.configurations.limitPredictions):
@@ -98,7 +97,8 @@ class ClassificationUtil:
                 if(self.configurations.showMetrics):
                     print("\n" + "-" * 15 + "\tMetrics\t" + "-" * 15)
                     self.calculeClassificationElapsedTime(openedImageTimeStart, openedImageTimeFinish, "Opened Image")
-                    self.calculeClassificationElapsedTime(timeStart, timeEnd, "File Predict Process ")
+                    self.calculeClassificationElapsedTime(openedImageTimeFinish, timeEnd, "File Predict Process ")
+                    self.calculeClassificationElapsedTime(openedImageTimeStart, timeEnd, "Total ")
 
 
     def evaluateDataset(self, pathTxt = None, pathImages = None, axis = 'x'):
@@ -108,10 +108,9 @@ class ClassificationUtil:
             df = pd.read_csv(pathTxt, sep=" ", engine="python", encoding="ISO-8859-1", names=['pred', 'real'])
             for file in glob.glob(os.path.join(pathImages, "*.jpg")):
                 self.__processLog('Evaluate Dataset')
-                timeStart = datetime.now()
-                
+
                 openedImageTimeStart = datetime.now()
-                    
+                
                 openedImage = ImageUtil.openImage(file, self.configurations.showPreview)
                 resizedImage = ImageUtil.resizeImage(openedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
                     
@@ -132,8 +131,9 @@ class ClassificationUtil:
                 if(self.configurations.showMetrics):
                     print("\n" + "-" * 15 + "\tMetrics\t" + "-" * 15)
                     self.calculeClassificationElapsedTime(openedImageTimeStart, openedImageTimeFinish, "Opened Image")
-                    self.calculeClassificationElapsedTime(timeStart, timeEnd, "Evaluate Dataset Process ")
-            
+                    self.calculeClassificationElapsedTime(openedImageTimeFinish, timeEnd, "File Predict Process ")
+                    self.calculeClassificationElapsedTime(openedImageTimeStart, timeEnd, "Total ")
+                                
             df['predLite'] = evaluatePredictions
             self.__save('./', 'dronet_supermercado_y' + ".txt", df)
 
