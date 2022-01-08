@@ -1,4 +1,6 @@
 from datetime import date, datetime
+import glob
+import pandas as pd
 from common.utils.files_util import Files
 from common.utils.image_util import ImageUtil
 import numpy as np
@@ -20,7 +22,7 @@ class ClassificationUtil:
         self.experimentName = Files().createExperimentFile(self.experimentName)
 
         while index < self.configurations.loops:
-            print("\n" + "=" * 15 + "\tReal Time Classification {}\t".format(self.configurations.datasetArchitecture.architecture) + "=" * 15)
+            self.__processLog('Real Time Classification')
             startPredictionTime = datetime.now()
 
             while len(classPredictions) < self.configurations.limitPredictions:
@@ -67,7 +69,7 @@ class ClassificationUtil:
             numberOfItens = self.__countFilesInDir(path)
             imageIndex = 0
             for i in range(start, numberOfItens, self.configurations.limitPredictions):
-                print("\nFile Classification")
+                self.__processLog('File Classification')
                 classPredictions = []
                 timeStart = datetime.now()
                 imageIndex = i
@@ -98,6 +100,49 @@ class ClassificationUtil:
                     self.calculeClassificationElapsedTime(openedImageTimeStart, openedImageTimeFinish, "Opened Image")
                     self.calculeClassificationElapsedTime(timeStart, timeEnd, "File Predict Process ")
 
+
+    def evaluateDataset(self, pathTxt = None, pathImages = None, axis = 'x'):
+        if(pathImages != None):
+            imageIndex = 0
+            evaluatePredictions = []
+            df = pd.read_csv(pathTxt, sep=" ", engine="python", encoding="ISO-8859-1", names=['pred', 'real'])
+            for file in glob.glob(os.path.join(pathImages, "*.jpg")):
+                self.__processLog('Evaluate Dataset')
+                timeStart = datetime.now()
+                
+                openedImageTimeStart = datetime.now()
+                    
+                openedImage = ImageUtil.openImage(file, self.configurations.showPreview)
+                resizedImage = ImageUtil.resizeImage(openedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
+                    
+                openedImageTimeFinish = datetime.now()
+
+                if(self.configurations.tensorflowLite):
+                    classX = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelX)
+                    classY = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelY)
+                else:
+                    classX = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelX)
+                    classY = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelY)
+                    
+                evaluatePredictions.append(np.argmax(classX)) if axis.lower() == 'x' else  evaluatePredictions.append(np.argmax(classY))
+
+                imageIndex += 1
+                timeEnd = datetime.now()
+                 
+                if(self.configurations.showMetrics):
+                    print("\n" + "-" * 15 + "\tMetrics\t" + "-" * 15)
+                    self.calculeClassificationElapsedTime(openedImageTimeStart, openedImageTimeFinish, "Opened Image")
+                    self.calculeClassificationElapsedTime(timeStart, timeEnd, "Evaluate Dataset Process ")
+            
+            df['predLite'] = evaluatePredictions
+            self.__save('./', 'dronet_supermercado_y' + ".txt", df)
+
+    def __save(self, path, fileName, dataFrame):
+        file = open(os.path.join(path, fileName), "w")
+        for sample in range(dataFrame.shape[0]):
+            file.write(str(dataFrame.iloc[sample]["predLite"]) + " " + str(dataFrame.iloc[sample]["real"]) + "\n")
+        file.close()
+        print("File saved")
 
     @staticmethod
     def calculeClassificationElapsedTime(timeStart, timeEnd, label=''):
@@ -157,3 +202,7 @@ class ClassificationUtil:
             return result.name
         except:
             print("Class value has not been mapped yet")
+
+
+    def __processLog(self, process):
+        print("\n" + "=" * 15 + '\t' + process + " {}\t".format(self.configurations.datasetArchitecture.architecture) + "=" * 15)
