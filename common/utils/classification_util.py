@@ -101,7 +101,7 @@ class ClassificationUtil:
                     self.calculeClassificationElapsedTime(openedImageTimeStart, timeEnd, "Total ")
 
 
-    def evaluateDataset(self, pathTxt = None, pathImages = None, axis = 'x'):
+    def evaluateDataset(self, generatedFileName: str , axis: str, pathTxt = None, pathImages = None,):
         if(pathImages != None):
             imageIndex = 0
             evaluatePredictions = []
@@ -135,7 +135,7 @@ class ClassificationUtil:
                     self.calculeClassificationElapsedTime(openedImageTimeStart, timeEnd, "Total ")
                                 
             df['predLite'] = evaluatePredictions
-            self.__save('./', 'dronet_supermercado_y' + ".txt", df)
+            self.__save('./', generatedFileName + '_' + axis  + ".txt", df)
 
     def __save(self, path, fileName, dataFrame):
         file = open(os.path.join(path, fileName), "w")
