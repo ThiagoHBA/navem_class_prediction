@@ -2,7 +2,8 @@ from keras.preprocessing import image
 from datetime import date, datetime
 from os import path, times
 from time import sleep
-import common.utils.classification_util as classificationModule
+#import common.utils.classification_util as classificationModule
+
 import numpy as np
 import cv2
 import importlib
@@ -16,16 +17,16 @@ if spam_loader is not None:
 
 class ImageUtil:
     @staticmethod
-    def predictImageTensorflow(image, tensorflowModel):       
+    def predictImageTensorflow(image, tensorflowModel):
         np.set_printoptions(suppress=True)
         image = np.vstack([image])
         result = tensorflowModel.predict(image, batch_size=64)
-        
+
         return result
 
     @staticmethod
-    def predictImageTensorflowLite(image, tensorflowLiteModel):       
-        inputDetails = tensorflowLiteModel.get_input_details()    
+    def predictImageTensorflowLite(image, tensorflowLiteModel):
+        inputDetails = tensorflowLiteModel.get_input_details()
         outputDetails = tensorflowLiteModel.get_output_details()
 
         tensorflowLiteModel.set_tensor(inputDetails[0]['index'], image)
@@ -37,11 +38,15 @@ class ImageUtil:
     def captureImage(cam, showPreview = False, framerate = 10):
         if(foundPicameraModule):
             return ImageUtil.__callPicameraCapture(showPreview, framerate)
-        return ImageUtil.__callOpenCVCapture(cam, showPreview, framerate) 
+        return ImageUtil.__callOpenCVCapture(cam, showPreview, framerate)
 
     @staticmethod
     def resizeImage(image, imageSize, colorScale):
         return ImageUtil.__resizeImage(image, imageSize, colorScale)
+
+    @staticmethod
+    def normalizeImage(image):
+        return ImageUtil.__normalizeImage(image)
 
     @staticmethod
     def saveImage(image, fileName: str, savePath = None):
@@ -56,16 +61,16 @@ class ImageUtil:
             fontScale              = 1
             thickness              = 2
             lineType               = 2
-            
+
             cv2.putText(image, imageText, org, font, fontScale, fontColor, thickness, lineType)
-        
+
         return image
 
     @staticmethod
     def openImage(path, showPreview = False):
         image = cv2.imread(path)
         if(showPreview):
-            ImageUtil.__showImage(image, 1)  
+            ImageUtil.__showImage(image, 1)
         return image
 
     def __callPicameraCapture(showPreview = False, framerate = 10):
@@ -74,22 +79,22 @@ class ImageUtil:
         camera = PiCamera()
         camera.resolution = (640 , 480)
         camera.framerate = 10
-        
+
         #Capture opencv object
         output = np.empty((480 * 640 * 3,), dtype=np.uint8)
         camera.capture(output, 'bgr')
         output = output.reshape((480, 640, 3))
-        
+
         if(showPreview):
             ImageUtil.__showImage(output, 60)
-        
+
         loadImageTime = (datetime.now() - startCaptureTime).microseconds / 1000000
         ImageUtil.__waitFrameTime(framerate, loadImageTime)
-        
+
         camera.close()
-        
+
         return output
-    
+
     def __callOpenCVCapture(cam, showPreview = False, framerate = 10):
         startCaptureTimer = datetime.now()
 
@@ -105,7 +110,7 @@ class ImageUtil:
     def __waitFrameTime(framerate, imageCaptureTime):
         total = (1/framerate) - imageCaptureTime
         if(total > 0):
-            sleep(total) 
+            sleep(total)
 
     def __resizeImage(imageToResize, imageSize, colorScale):
         imageToResize = cv2.resize(imageToResize, imageSize)
@@ -114,6 +119,16 @@ class ImageUtil:
         x = np.expand_dims(x, axis=0)
 
         return x
+
+    '''
+        Using Numpy lib, but only work if image is gray scale
+    '''
+    def __normalizeImageNumpy(image):
+        return (image - np.min(image))/np.ptp(image)
+
+    def __normalizeImage(image):
+        return cv2.normalize(image, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+
 
     def __showImage(imageToShow, waitTime):
         imageToShow = cv2.resize(imageToShow, (480,720))
