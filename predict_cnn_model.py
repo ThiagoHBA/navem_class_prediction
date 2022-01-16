@@ -6,7 +6,8 @@ import cv2
 cam = cv2.VideoCapture(0)
 configurations = ConfigurationUtil()
 architectureDetails = configurations.datasetArchitecture.getArchictecureDetails(
-    useTensorflowLite = configurations.tensorflowLite
+    useTensorflowLite = configurations.tensorflowLite,
+    evaluate = True
 )
 
 def main():
