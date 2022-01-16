@@ -123,7 +123,7 @@ class ClassificationUtil:
                     classX = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelX)
                     classY = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelY)
                     
-                evaluatePredictions.append(np.argmax(classX)) if axis.lower() == 'x' else  evaluatePredictions.append(np.argmax(classY))
+                evaluatePredictions.append(np.argmax(classX) if axis.lower() == 'x' else np.argmax(classY))
 
                 imageIndex += 1
                 timeEnd = datetime.now()
