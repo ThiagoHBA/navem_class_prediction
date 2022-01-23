@@ -1,6 +1,7 @@
 from keras.preprocessing import image
+from keras.preprocessing.image import load_img, img_to_array, ImageDataGenerator
 from datetime import date, datetime
-from os import path, times
+from os import path, times, system
 from time import sleep
 #import common.utils.classification_util as classificationModule
 
@@ -46,7 +47,7 @@ class ImageUtil:
 
     @staticmethod
     def normalizeImage(image):
-        return ImageUtil.__normalizeImage(image)
+        return ImageUtil.__normalizeImageAsKerasMath(image)
 
     @staticmethod
     def saveImage(image, fileName: str, savePath = None):
@@ -125,6 +126,27 @@ class ImageUtil:
     '''
     def __normalizeImageNumpy(image):
         return (image - np.min(image))/np.ptp(image)
+
+    def __normalizeImageKeras(image, file):
+        #print(len(image))
+        #print(image[0][0])
+        print(file[:-10] + '\\')
+        #img = load_img(file)
+        #img_arr = np.expand_dims(img_to_array(image), axis=0)
+        datagen = ImageDataGenerator(rescale=1./255)
+        #cv2.imshow('asf', datagen.flow(img_arr, batch_size=1)[0])
+        #cv2.waitKey()
+        #system('pause')
+        pathImages = r'D:\\Mestrado\\datasets\\dronet\\sidewalk_accy_all_datasets_classes_new_1630_07\\sidewalk_accy_all_datasets_classes_new_1630_07\\test\\sidewalk_accy_all_datasets_classes_new_1630_07\\images',
+        val_generator = datagen.flow_from_directory(pathImages, batch_size=1, color_mode='grayscale')
+        system('pause')
+        x,y = val_generator.next()
+        print(x)
+        return x[0]
+        #return datagen.flow_from_directory(file[:-11], batch_size=1, color_mode='grayscale')[0]
+
+    def __normalizeImageAsKerasMath(image):
+        return image*1./255
 
     def __normalizeImage(image):
         return cv2.normalize(image, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
