@@ -1,6 +1,6 @@
 from .files_util import Files
 import tensorflow as tf
-from keras.models import model_from_json
+from tensorflow.keras.models import model_from_json
 import sys
 
 class FileModel:

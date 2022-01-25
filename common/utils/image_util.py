@@ -1,4 +1,4 @@
-from keras.preprocessing import image
+from tensorflow.keras.preprocessing import image
 from datetime import date, datetime
 from os import path, times
 from time import sleep
@@ -69,22 +69,25 @@ class ImageUtil:
         return image
 
     def __callPicameraCapture(showPreview = False, framerate = 10):
+        width = 640
+        heigth = 480
+        deepness = 3
+        
         startCaptureTime = datetime.now()
+        
+        output = np.empty((heigth * width * deepness,), dtype=np.uint8)
 
         camera = PiCamera()
-        camera.resolution = (640 , 480)
-        camera.framerate = 10
+        camera.resolution = (width , heigth)
+        camera.capture(output, 'bgr', use_video_port = True)
         
-        #Capture opencv object
-        output = np.empty((480 * 640 * 3,), dtype=np.uint8)
-        camera.capture(output, 'bgr')
-        output = output.reshape((480, 640, 3))
+        output = output.reshape((heigth, width, deepness))
         
         if(showPreview):
             ImageUtil.__showImage(output, 60)
         
         loadImageTime = (datetime.now() - startCaptureTime).microseconds / 1000000
-        ImageUtil.__waitFrameTime(framerate, loadImageTime)
+#         ImageUtil.__waitFrameTime(framerate, loadImageTime)
         
         camera.close()
         
