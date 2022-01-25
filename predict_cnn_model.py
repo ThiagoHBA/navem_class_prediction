@@ -5,32 +5,39 @@ import cv2
 
 cam = cv2.VideoCapture(0)
 configurations = ConfigurationUtil()
-architectureDetails = configurations.datasetArchitecture.getArchictecureDetails(
-    useTensorflowLite = configurations.tensorflowLite,
-)
+
 
 def main():
-    tensorflowModels = obtainTensorflowModels()
+    architectureDetails = configurations.datasetArchitecture.getArchictecureDetails(useTensorflowLite = True)
+    configurations.tensorflowLite = True
+    tensorflowLiteModels = obtainTensorflowModels(architectureDetails)
+    architectureDetails = configurations.datasetArchitecture.getArchictecureDetails(useTensorflowLite = False)
+    configurations.tensorflowLite = False
+    tensorflowNormalModels = obtainTensorflowModels(architectureDetails)
 
     ClassificationUtil(
-        tensorflowModelX = tensorflowModels[0],
-        tensorflowModelY = tensorflowModels[1],
-        cam = cam,
-        configurations = configurations,
-    ).realTimeLoopProcess();
+        tensorflowModelX=tensorflowNormalModels[0],
+        tensorflowModelY=tensorflowNormalModels[1],
+        cam=cam,
+        configurations=configurations,
+    ).compareTensorflowLiteVersusNormal(
+        loops=100,
+        tensorflowLiteModel=tensorflowLiteModels,
+        tensorflowNormalModel=tensorflowNormalModels,
+    )
 
 
-def obtainTensorflowModels():
+def obtainTensorflowModels(architectureDetails):
     modelX = FileModel(
-                path=architectureDetails['path'][0],
-                modelName=architectureDetails['model_struct'],
-                weightFile=architectureDetails['weight_file']
-            )
+        path=architectureDetails['path'][0],
+        modelName=architectureDetails['model_struct'],
+        weightFile=architectureDetails['weight_file']
+    )
     modelY = FileModel(
-                path=architectureDetails['path'][1],
-                modelName=architectureDetails['model_struct'],
-                weightFile=architectureDetails['weight_file']
-            )
+        path=architectureDetails['path'][1],
+        modelName=architectureDetails['model_struct'],
+        weightFile=architectureDetails['weight_file']
+    )
 
     if configurations.tensorflowLite:
         return (modelX.compileTensorflowLiteModel(), modelY.compileTensorflowLiteModel())

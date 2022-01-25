@@ -1,3 +1,4 @@
+from asyncore import loop
 from datetime import date, datetime
 import glob
 import pandas as pd
@@ -136,6 +137,27 @@ class ClassificationUtil:
                                 
             df['predLite'] = evaluatePredictions
             self.__save('./', generatedFileName + '_' + axis  + ".txt", df)
+
+    def compareTensorflowLiteVersusNormal(self, loops:int, tensorflowLiteModel, tensorflowNormalModel):
+        for _ in range(loops):
+            capturedImage = ImageUtil.captureImage(self.cam, self.configurations.showPreview, self.configurations.fps)
+            resizedImage = ImageUtil.resizeImage(capturedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
+
+            startTensorflowLiteInference = datetime.now()
+
+            ImageUtil.predictImageTensorflowLite(resizedImage, tensorflowLiteModel[0])
+            ImageUtil.predictImageTensorflowLite(resizedImage, tensorflowLiteModel[1])
+
+            finishTensorflowLiteInference = datetime.now()
+
+            ImageUtil.predictImageTensorflow(resizedImage, tensorflowNormalModel[0])
+            ImageUtil.predictImageTensorflow(resizedImage, tensorflowNormalModel[1])
+
+            finishTensorflowNormalInference = datetime.now()
+
+            print("\n" + "-" * 15 + "\tMetrics\t" + "-" * 15)     
+            self.calculeClassificationElapsedTime(startTensorflowLiteInference, finishTensorflowLiteInference, "Tensorflow Lite Inference")
+            self.calculeClassificationElapsedTime(finishTensorflowLiteInference, finishTensorflowNormalInference, "Tensorflow Normal Inference ")
 
     def __save(self, path, fileName, dataFrame):
         file = open(os.path.join(path, fileName), "w")
