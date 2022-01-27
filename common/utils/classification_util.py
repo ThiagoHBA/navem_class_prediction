@@ -139,7 +139,10 @@ class ClassificationUtil:
             self.__save('./', generatedFileName + '_' + axis  + ".txt", df)
 
     def compareTensorflowLiteVersusNormal(self, loops:int, tensorflowLiteModel, tensorflowNormalModel):
-        for _ in range(loops):
+        elapsedTimeTensorflowLite = np.array([])
+        elapsedTimeTensorflow = np.array([])
+        for i in range(loops):
+            print(f"Iteration : {i}")
             capturedImage = ImageUtil.captureImage(self.cam, self.configurations.showPreview, self.configurations.fps)
             resizedImage = ImageUtil.resizeImage(capturedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
 
@@ -155,9 +158,16 @@ class ClassificationUtil:
 
             finishTensorflowNormalInference = datetime.now()
 
-            print("\n" + "-" * 15 + "\tMetrics\t" + "-" * 15)     
-            self.calculeClassificationElapsedTime(startTensorflowLiteInference, finishTensorflowLiteInference, "Tensorflow Lite Inference")
-            self.calculeClassificationElapsedTime(finishTensorflowLiteInference, finishTensorflowNormalInference, "Tensorflow Normal Inference ")
+            elapsedTimeTensorflowLite = np.append(elapsedTimeTensorflowLite, (finishTensorflowLiteInference - startTensorflowLiteInference).total_seconds())
+            elapsedTimeTensorflow = np.append(elapsedTimeTensorflow, (finishTensorflowNormalInference - finishTensorflowLiteInference).total_seconds())
+
+        print("TensorflowLite Metrics (seconds):")
+        print(f"\tMean inference time: {np.mean(elapsedTimeTensorflowLite)}")
+        print(f"\tDeviation: {np.std(elapsedTimeTensorflowLite)}")
+        print("Tensorflow Metrics (seconds):")
+        print(f"\tMean inference time: {np.mean(elapsedTimeTensorflow)}");    
+        print(f"\tDeviation: {np.std(elapsedTimeTensorflow)}");    
+        
 
     def __save(self, path, fileName, dataFrame):
         file = open(os.path.join(path, fileName), "w")
