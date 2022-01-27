@@ -58,9 +58,9 @@ class ClassificationUtil:
 
             if(self.configurations.showMetrics):
                 print("\n" + "-" * 15 + "\tMetrics\t" + "-" * 15)
-                self.calculeClassificationElapsedTime(startProcessImageTime, finishProcessImageTime, "Process Image")
-                self.calculeClassificationElapsedTime(finishProcessImageTime, finishPredictionTime, "Predict Result")
-                self.calculeClassificationElapsedTime(startProcessImageTime, finishPredictionTime, "Total ")
+                self.printElapsedTime(startProcessImageTime, finishProcessImageTime, "Process Image")
+                self.printElapsedTime(finishProcessImageTime, finishPredictionTime, "Predict Result")
+                self.printElapsedTime(startProcessImageTime, finishPredictionTime, "Total ")
 
             index = 0 if(self.configurations.infinity) else index + 1
 
@@ -96,9 +96,9 @@ class ClassificationUtil:
 
                 if(self.configurations.showMetrics):
                     print("\n" + "-" * 15 + "\tMetrics\t" + "-" * 15)
-                    self.calculeClassificationElapsedTime(openedImageTimeStart, openedImageTimeFinish, "Opened Image")
-                    self.calculeClassificationElapsedTime(openedImageTimeFinish, timeEnd, "File Predict Process ")
-                    self.calculeClassificationElapsedTime(openedImageTimeStart, timeEnd, "Total ")
+                    self.printElapsedTime(openedImageTimeStart, openedImageTimeFinish, "Opened Image")
+                    self.printElapsedTime(openedImageTimeFinish, timeEnd, "File Predict Process ")
+                    self.printElapsedTime(openedImageTimeStart, timeEnd, "Total ")
 
 
     def evaluateDataset(self, generatedFileName: str , axis: str, pathTxt = None, pathImages = None,):
@@ -130,9 +130,9 @@ class ClassificationUtil:
                  
                 if(self.configurations.showMetrics):
                     print("\n" + "-" * 15 + "\tMetrics\t" + "-" * 15)
-                    self.calculeClassificationElapsedTime(openedImageTimeStart, openedImageTimeFinish, "Opened Image")
-                    self.calculeClassificationElapsedTime(openedImageTimeFinish, timeEnd, "File Predict Process ")
-                    self.calculeClassificationElapsedTime(openedImageTimeStart, timeEnd, "Total ")
+                    self.printElapsedTime(openedImageTimeStart, openedImageTimeFinish, "Opened Image")
+                    self.printElapsedTime(openedImageTimeFinish, timeEnd, "File Predict Process ")
+                    self.printElapsedTime(openedImageTimeStart, timeEnd, "Total ")
                                 
             df['predLite'] = evaluatePredictions
             self.__save('./', generatedFileName + '_' + axis  + ".txt", df)
@@ -145,9 +145,13 @@ class ClassificationUtil:
         print("File saved")
 
     @staticmethod
-    def calculeClassificationElapsedTime(timeStart, timeEnd, label=''):
+    def calculeClassificationElapsedTime(timeStart, timeEnd):
+        return (timeEnd - timeStart).total_seconds()
+
+    @staticmethod
+    def printElapsedTime(timeStart, timeEnd, label=''):
         print("\n" + "=" * 15)
-        print(label + "ElapsedTime in seconds: ", (timeEnd - timeStart).total_seconds())
+        print(label + "ElapsedTime in seconds: ", ClassificationUtil.calculeClassificationElapsedTime(timeStart, timeEnd))
         print("=" * 15)
 
     @staticmethod
