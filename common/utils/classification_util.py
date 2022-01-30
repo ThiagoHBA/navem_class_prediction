@@ -29,19 +29,20 @@ class ClassificationUtil:
 
                     capturedImage = ImageUtil.captureImage(self.cam, self.configurations.showPreview, self.configurations.fps)
                     resizedImage = ImageUtil.resizeImage(capturedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
+                    normalizedImage = ImageUtil.normalizeImage(resizedImage)
 
                     finishProcessImageTime = datetime.now()
-                    
+
                     if(self.configurations.tensorflowLite):
-                        classX = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelX)
-                        classY = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelY)
+                        classX = ImageUtil.predictImageTensorflowLite(normalizedImage, self.tensorflowModelX)
+                        classY = ImageUtil.predictImageTensorflowLite(normalizedImage, self.tensorflowModelY)
                     else:
-                        classX = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelX)
-                        classY = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelY)
-                
+                        classX = ImageUtil.predictImageTensorflow(normalizedImage, self.tensorflowModelX)
+                        classY = ImageUtil.predictImageTensorflow(normalizedImage, self.tensorflowModelY)
+
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
                     imageIndex += 1
-            
+
             imageResult = self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions))
             self.logs.writeLog(imageResult)
 
@@ -75,10 +76,10 @@ class ClassificationUtil:
 
                 for j in range(self.configurations.limitPredictions):
                     openedImageTimeStart = datetime.now()
-                    
+
                     openedImage = ImageUtil.openImage(path + str(i + j) + '.jpg', self.configurations.showPreview)
                     resizedImage = ImageUtil.resizeImage(openedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
-                    
+
                     openedImageTimeFinish = datetime.now()
 
                     if(self.configurations.tensorflowLite):
@@ -87,11 +88,11 @@ class ClassificationUtil:
                     else:
                         classX = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelX)
                         classY = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelY)
-                    
+
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
 
                 self.logs.writeLog(self.classificationToMap(imageIndex, self.selectClassificationClass('x', classPredictions), self.selectClassificationClass('y', classPredictions)))
-                
+
                 timeEnd = datetime.now()
 
                 if(self.configurations.showMetrics):
@@ -110,24 +111,25 @@ class ClassificationUtil:
                 self.__processLog('Evaluate Dataset')
 
                 openedImageTimeStart = datetime.now()
-                
+
                 openedImage = ImageUtil.openImage(file, self.configurations.showPreview)
                 resizedImage = ImageUtil.resizeImage(openedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
-                    
+                normalizedImage = ImageUtil.normalizeImage(resizedImage)
+
                 openedImageTimeFinish = datetime.now()
 
                 if(self.configurations.tensorflowLite):
-                    classX = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelX)
-                    classY = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelY)
+                    classX = ImageUtil.predictImageTensorflowLite(normalizedImage, self.tensorflowModelX)
+                    classY = ImageUtil.predictImageTensorflowLite(normalizedImage, self.tensorflowModelY)
                 else:
-                    classX = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelX)
-                    classY = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelY)
-                    
+                    classX = ImageUtil.predictImageTensorflow(normalizedImage, self.tensorflowModelX)
+                    classY = ImageUtil.predictImageTensorflow(normalizedImage, self.tensorflowModelY)
+
                 evaluatePredictions.append(np.argmax(classX) if axis.lower() == 'x' else np.argmax(classY))
 
                 imageIndex += 1
                 timeEnd = datetime.now()
-                 
+
                 if(self.configurations.showMetrics):
                     print("\n" + "-" * 15 + "\tMetrics\t" + "-" * 15)
                     self.printElapsedTime(openedImageTimeStart, openedImageTimeFinish, "Opened Image")
@@ -191,7 +193,7 @@ class ClassificationUtil:
         logs = Files(self.experimentName) if self.experimentName != None else Files()
         logs.initializeLog()
         return logs
-    
+
     def __countFilesInDir(self, path: str) -> int:
         file_entries = [entry for entry in os.scandir(path) if entry.is_file()]
 
