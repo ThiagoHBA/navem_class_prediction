@@ -29,15 +29,16 @@ class ClassificationUtil:
 
                     capturedImage = ImageUtil.captureImage(self.cam, self.configurations.showPreview, self.configurations.fps)
                     resizedImage = ImageUtil.resizeImage(capturedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
+                    normalizedImage = ImageUtil.normalizeImage(resizedImage)
 
                     finishProcessImageTime = datetime.now()
 
                     if(self.configurations.tensorflowLite):
-                        classX = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelX)
-                        classY = ImageUtil.predictImageTensorflowLite(resizedImage, self.tensorflowModelY)
+                        classX = ImageUtil.predictImageTensorflowLite(normalizedImage, self.tensorflowModelX)
+                        classY = ImageUtil.predictImageTensorflowLite(normalizedImage, self.tensorflowModelY)
                     else:
-                        classX = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelX)
-                        classY = ImageUtil.predictImageTensorflow(resizedImage, self.tensorflowModelY)
+                        classX = ImageUtil.predictImageTensorflow(normalizedImage, self.tensorflowModelX)
+                        classY = ImageUtil.predictImageTensorflow(normalizedImage, self.tensorflowModelY)
 
                     classPredictions.append((np.argmax(classX), np.argmax(classY)))
                     imageIndex += 1
