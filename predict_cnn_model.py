@@ -21,7 +21,7 @@ def main():
         cam=cam,
         configurations=configurations,
     ).compareTensorflowLiteVersusNormal(
-        loops=100,
+        pathImages = 'D:/Documentos/datasets/sidewalk_x_images/',
         tensorflowLiteModel=tensorflowLiteModels,
         tensorflowNormalModel=tensorflowNormalModels,
     )

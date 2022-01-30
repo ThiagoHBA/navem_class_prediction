@@ -138,13 +138,14 @@ class ClassificationUtil:
             df['predLite'] = evaluatePredictions
             self.__save('./', generatedFileName + '_' + axis  + ".txt", df)
 
-    def compareTensorflowLiteVersusNormal(self, loops:int, tensorflowLiteModel, tensorflowNormalModel):
+    def compareTensorflowLiteVersusNormal(self, tensorflowLiteModel, tensorflowNormalModel, pathImages = None):
         elapsedTimeTensorflowLite = np.array([])
         elapsedTimeTensorflow = np.array([])
-        for i in range(loops):
-            print(f"Iteration : {i}")
-            capturedImage = ImageUtil.captureImage(self.cam, self.configurations.showPreview, self.configurations.fps)
-            resizedImage = ImageUtil.resizeImage(capturedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
+        imageIndex = 0
+        for file in glob.glob(os.path.join(pathImages, "*.jpg")):
+            print(f"Iteration : {imageIndex}")
+            openedImage = ImageUtil.openImage(file, self.configurations.showPreview)
+            resizedImage = ImageUtil.resizeImage(openedImage, self.configurations.datasetArchitecture.getImageSize(),  self.configurations.datasetArchitecture.getImageColorScale())
 
             startTensorflowLiteInference = datetime.now()
 
@@ -161,6 +162,8 @@ class ClassificationUtil:
             elapsedTimeTensorflowLite = np.append(elapsedTimeTensorflowLite, (finishTensorflowLiteInference - startTensorflowLiteInference).total_seconds())
             elapsedTimeTensorflow = np.append(elapsedTimeTensorflow, (finishTensorflowNormalInference - finishTensorflowLiteInference).total_seconds())
 
+            imageIndex += 1
+            if imageIndex > 100: break
         print("TensorflowLite Metrics (seconds):")
         print(f"\tMean inference time: {np.mean(elapsedTimeTensorflowLite)}")
         print(f"\tDeviation: {np.std(elapsedTimeTensorflowLite)}")
