@@ -7,7 +7,6 @@ cam = cv2.VideoCapture(0)
 configurations = ConfigurationUtil()
 architectureDetails = configurations.datasetArchitecture.getArchictecureDetails(
     useTensorflowLite = configurations.tensorflowLite,
-    evaluate = True
 )
 
 def main():
@@ -18,12 +17,7 @@ def main():
         tensorflowModelY = tensorflowModels[1],
         cam = cam,
         configurations = configurations,
-    ).evaluateDataset(
-        generatedFileName = 'dronet_supermercado_tensorflow_lite',
-        axis = 'x',
-        pathImages = 'D:/Documentos/datasets/dronet/market_accy_all_datasets_classes_362_00/market_accy_all_datasets_classes_362_00/test/market_accy_all_datasets_classes_362_00/images',
-        pathTxt = 'D:/Documentos/datasets/dronet/predict_truth_test_model_weights_299.h5_0_.txt',
-    )
+    ).realTimeLoopProcess();
 
 
 def obtainTensorflowModels():
