@@ -12,13 +12,14 @@ def main():
     architectureDetails = DatasetArchitectureUtil(architectureName).getArchictecureDetails(evaluate = evaluate)
     axis = getAxis()
 
-    tensorflowModel = FileModel(
-        path = architectureDetails['path'][0 if axis == 'x' else 1],
-        modelName = architectureDetails['model_struct'],
-        weightFile = architectureDetails['weight_file']
-    ).compileTensorflowModel()
+    tensorflowLiteModel = generateTensorflowLiteFromTensorflowModel(
+        tensorflowModel =  FileModel(
+            path = architectureDetails['path'][0 if axis == 'x' else 1],
+            modelName = architectureDetails['model_struct'],
+            weightFile = architectureDetails['weight_file']
+        ).compileTensorflowModel()
+    )
 
-    tensorflowLiteModel = generateTensorflowLiteFromTensorflowModel(tensorflowModel = tensorflowModel)
     createTensorflowLiteFile(model = tensorflowLiteModel, name = architectureName, axis = axis, evaluate = evaluate)
 
 def generateTensorflowLiteFromTensorflowModel(tensorflowModel):
@@ -31,7 +32,7 @@ def createTensorflowLiteFile(model, name, axis, evaluate):
     tensorflowLitePath = f'./models/{name}/tensorflow_lite' + ('_evaluate' if evaluate else '')
     Files.createPathIfNotExist(f'{tensorflowLitePath}/')
 
-    tensorflowLiteFileName = f'{name}_model_test_{axis}.tflite'
+    tensorflowLiteFileName = f'{name}_model_{axis}.tflite'
     completePath = f'{tensorflowLitePath}/{tensorflowLiteFileName}'
 
     open(completePath, 'wb').write(model)
@@ -55,7 +56,7 @@ def getSelectedArchitecture():
         sys.exit()
 
 def getAxis():
-    axis = str(input('Axis [x/y]): ')).lower()
+    axis = str(input('Axis [x/y]: ')).lower()
     if(axis != 'x' and axis != 'y'):
         print("Invalid Axis")
         sys.exit()
