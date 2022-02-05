@@ -19,10 +19,14 @@ class Files:
             loaded_model_json = json_file.read()
 
         return loaded_model_json
-    
+
+    @staticmethod
+    def createPathIfNotExist(path):
+        if not os.path.isdir(path):
+            os.mkdir(path)
+
     def createExperimentFile(self, experimentName):
-        if not os.path.isdir('experiments'):
-            os.mkdir('experiments')
+        Files.createPathIfNotExist('experiments')
         if experimentName != '':
             if os.path.isdir('./experiments/' + experimentName):
                 if not str(input("This path already exist, do you want to keep going? [y/n]: ")).lower() == 'y':
